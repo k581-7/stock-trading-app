@@ -17,6 +17,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_113304) do
   create_table "portfolios", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "quantity"
   end
 
   create_table "stocks", force: :cascade do |t|
@@ -30,6 +31,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_113304) do
   create_table "transactions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "type", null: false
+    t.decimal "quantity", null: false
+    t.decimal "amount", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -38,8 +42,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_113304) do
     t.string "username", null: false
     t.string "email", null: false
     t.string "password", null: false
-    t.boolean "is_approved"
+    t.date "approval_date", null: false
     t.boolean "is_admin", default: false
+    t.boolean "is_broker", default: false
   end
 
   create_table "wallets", force: :cascade do |t|
