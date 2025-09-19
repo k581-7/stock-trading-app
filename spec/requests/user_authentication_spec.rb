@@ -6,7 +6,8 @@ RSpec.describe "User Authentication", type: :request do
       username: "traderjoe",
       email: "trader@example.com",
       password: "password123",
-      password_confirmation: "password123"
+      password_confirmation: "password123",
+      confirmed_at: Time.now
     )
   end
 
