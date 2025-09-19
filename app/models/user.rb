@@ -4,8 +4,15 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :confirmable
+  
+  enum :role, { admin: 0, trader: 1, broker: 2 }
+  
+  before_save :set_approval_date, if: :saved_change_to_role?
+  
 
-  before_update :set_approval_date, if: :saved_change_to_approved?
+  def approved?
+    broker? || admin?
+  end
 
   private
 

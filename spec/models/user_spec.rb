@@ -1,5 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "defaults to trader" do
+    u = User.create!(email: "a@b.com", password: "Passw0rd!")
+    expect(u.role).to eq("trader")
+    expect(u.trader?).to be true
+  end
+
+  it "sets approval_date when promoted to broker" do
+    u = User.create!(email: "b@b.com", password: "Passw0rd!")
+    u.update!(role: :broker)
+    expect(u.broker?).to be true
+    expect(u.approval_date).to be_present
+  end
+
+  it "clears approval_date if demoted back to trader" do
+    u = User.create!(email: "c@b.com", password: "Passw0rd!", role: :broker)
+    u.update!(role: :trader)
+    expect(u.trader?).to be true
+    expect(u.approval_date).to be_nil
+  end
 end
