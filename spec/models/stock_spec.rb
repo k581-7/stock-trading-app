@@ -1,59 +1,33 @@
 require 'rails_helper'
 
 RSpec.describe Stock, type: :model do
-  let(:portfolio) { Portfolio.create!(quantity: 10) }
-
-  context "validations" do
-    it "is valid with valid attributes" do
-      stock = Stock.new(
-        title: "AAPL",
-        buying_price: 100,
-        selling_price: 150,
-        portfolio: portfolio
-      )
+  describe 'validations' do
+    it 'is valid with valid attributes' do
+      stock = Stock.new(title: "Apple", buying_price: 100.0, selling_price: 120.0)
       expect(stock).to be_valid
     end
 
-    it "is not valid without a title" do
-      stock = Stock.new(
-        title: nil,
-        buying_price: 100,
-        selling_price: 150,
-        portfolio: portfolio
-      )
-      expect(stock).not_to be_valid
+    it 'is invalid without title' do
+      stock = Stock.new(buying_price: 100.0, selling_price: 120.0)
+      expect(stock).to_not be_valid
     end
 
-    it "is not valid with negative buying_price" do
-      stock = Stock.new(
-        title: "AAPL",
-        buying_price: -10,
-        selling_price: 150,
-        portfolio: portfolio
-      )
-      expect(stock).not_to be_valid
+    it 'is invalid with negative buying_price' do
+      stock = Stock.new(title: "Apple", buying_price: -10.0, selling_price: 120.0)
+      expect(stock).to_not be_valid
     end
 
-    it "is not valid with negative selling_price" do
-      stock = Stock.new(
-        title: "AAPL",
-        buying_price: 100,
-        selling_price: -50,
-        portfolio: portfolio
-      )
-      expect(stock).not_to be_valid
+    it 'is invalid with negative selling_price' do
+      stock = Stock.new(title: "Apple", buying_price: 100.0, selling_price: -10.0)
+      expect(stock).to_not be_valid
     end
   end
 
-  context "associations" do
-    it "belongs to a portfolio" do
-      stock = Stock.create!(
-        title: "TSLA",
-        buying_price: 200,
-        selling_price: 250,
-        portfolio: portfolio
-      )
-      expect(stock.portfolio).to eq(portfolio)
+  describe '#profit_margin' do
+    let(:stock) { Stock.create!(title: "Apple", buying_price: 100.0, selling_price: 120.0) }
+    
+    it 'calculates profit margin correctly' do
+      expect(stock.profit_margin).to eq(20.0)
     end
   end
 end

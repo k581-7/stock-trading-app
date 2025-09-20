@@ -7,7 +7,7 @@ class User < ApplicationRecord
   
   enum :role, { admin: 0, trader: 1, broker: 2 }
   
-  before_save :set_approval_date, if: :saved_change_to_role?
+  after_update :set_approval_date, if: :saved_change_to_role?
   
 
   def approved?
@@ -15,6 +15,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def set_default_role
+    self.role ||= :trader
+  end
 
   def set_approval_date
     if approved?
