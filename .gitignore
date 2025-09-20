@@ -34,4 +34,4 @@
 /config/master.key
 
 # Ignore rails helper
-/spec/rails_helper.rb
+# /spec/rails_helper.rb
