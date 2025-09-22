@@ -1,5 +1,4 @@
 class PortfoliosController < ApplicationController
-  def show 
-    user = 
+  def show
   end
 end
