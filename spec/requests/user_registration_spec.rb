@@ -7,13 +7,13 @@ RSpec.describe "User Registration", type: :request do
         username: "traderjoe",
         email: "trader@example.com",
         password: "password123",
-        password_confirmation: "password123",
+        password_confirmation: "password123"
       }
     }
 
     follow_redirect!
 
-    expect(response.body).to match(/sign up successfully|confirmation link/i) 
+    expect(response.body).to match(/sign up successfully|confirmation link/i)
     expect(User.last.email).to eq("trader@example.com")
   end
 end

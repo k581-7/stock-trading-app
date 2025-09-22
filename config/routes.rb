@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }
+  get "/portfolio/:stock_id" => "portfolio#show", as: :show_portfolio
 
   namespace :admin do
     resources :users do
