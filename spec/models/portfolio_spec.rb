@@ -56,7 +56,5 @@ RSpec.describe Portfolio, type: :model do
       expected_percentage = (((10 * 120.0) - (10 * 100.0)) / (10 * 100.0)) * 100
       expect(portfolio.profit_loss_percentage).to eq(expected_percentage.round(2))
     end
-
-    end
   end
-
+end

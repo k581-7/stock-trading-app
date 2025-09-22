@@ -52,7 +52,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-  gem 'rspec-rails'
+  gem "rspec-rails"
 end
 
 group :development do
@@ -68,7 +68,7 @@ end
 
 # gem 'iex-ruby-client'
 
-gem 'httparty'
-gem 'dotenv-rails', groups: [:development, :test]
+gem "httparty"
+gem "dotenv-rails", groups: [ :development, :test ]
 gem "devise"
 gem "devise-jwt"
