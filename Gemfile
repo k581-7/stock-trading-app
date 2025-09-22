@@ -72,3 +72,5 @@ gem "httparty"
 gem "dotenv-rails", groups: [ :development, :test ]
 gem "devise"
 gem "devise-jwt"
+
+gem "finnhub_ruby", "~> 2.0.0"
