@@ -1,4 +1,4 @@
-class Transaction < ApplicationRecord
+class TradeLog < ApplicationRecord
   self.inheritance_column = nil
 
   validates :type, presence: true, inclusion: { in: %w[buy sell deposit withdraw] }
