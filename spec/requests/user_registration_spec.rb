@@ -50,4 +50,3 @@ RSpec.describe "User Registration", type: :request do
     end
   end
 end
-

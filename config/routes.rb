@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
   # --- Admin routes ---
   namespace :admin do
-    resources :users, only: [:index, :show] do
+    resources :users, only: [ :index, :show ] do
       member do
         patch :approve
         patch :revoke
@@ -28,8 +28,8 @@ Rails.application.routes.draw do
     end
   end
 
-  #<%= link_to "Approve", approve_admin_user_path(user), method: :patch %>
-  #<%= link_to "Revoke", revoke_admin_user_path(user), method: :patch %>
+  # <%= link_to "Approve", approve_admin_user_path(user), method: :patch %>
+  # <%= link_to "Revoke", revoke_admin_user_path(user), method: :patch %>
 
 
   # Health check
