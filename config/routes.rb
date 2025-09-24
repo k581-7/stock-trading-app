@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
+  get "testing/index"
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }
+  root "portfolio#index"
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
-  get "/portfolio",           to: "portfolios#show", as: :portfolio
-  get "/portfolio/:stock_id", to: "portfolios#show", as: :show_portfolio
+  get "/portfolio",           to: "portfolio#show", as: :portfolio
+  get "/portfolio/:stock_id", to: "portfolio#show", as: :show_portfolio
 
   # Transactions
   get "/transactions", to: "transactions#index", as: :transactions
@@ -34,7 +36,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Root path (Devise login page)
-  devise_scope :user do
-    root to: "devise/sessions#new"
-  end
+  # devise_scope :user do
+  #   root to: "devise/sessions#new"
+  # end
 end

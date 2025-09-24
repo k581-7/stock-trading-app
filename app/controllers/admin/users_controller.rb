@@ -1,7 +1,7 @@
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin!
-  before_action :set_user, only: [:approve, :revoke, :show]
+  before_action :set_user, only: [ :approve, :revoke, :show ]
 
   def index
     @users = User.all
