@@ -4,7 +4,19 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :username ])
-    devise_parameter_sanitizer.permit(:account_update, keys: [ :username ])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:username])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:username])
+  end
+
+  def require_confirmed_user!
+    unless current_user&.confirmed?
+      redirect_to root_path, alert: "You must confirm your email first."
+    end
+  end
+
+  def require_approved_trader!
+    unless current_user&.trader?
+      redirect_to root_path, alert: "Your account must be approved before trading."
+    end
   end
 end

@@ -74,3 +74,5 @@ gem "devise"
 gem "devise-jwt"
 
 gem "finnhub_ruby", "~> 2.0.0"
+
+gem "letter_opener", group: :development

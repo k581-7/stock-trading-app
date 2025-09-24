@@ -5,20 +5,20 @@ Rails.application.routes.draw do
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
-  get "/portfolio",          to: "portfolios#show", as: :portfolio
+  get "/portfolio",           to: "portfolios#show", as: :portfolio
   get "/portfolio/:stock_id", to: "portfolios#show", as: :show_portfolio
 
   # Transactions
-  get "/transactions",       to: "transactions#index", as: :transactions
+  get "/transactions", to: "transactions#index", as: :transactions
 
   # Trades (form + buy/sell actions)
-  get  "/trades/new",        to: "trades#new",  as: :new_trade
-  post "/trades/buy",        to: "trades#buy",  as: :buy_trade
-  post "/trades/sell",       to: "trades#sell", as: :sell_trade
+  get  "/trades/new", to: "trades#new",  as: :new_trade
+  post "/trades/buy", to: "trades#buy",  as: :buy_trade
+  post "/trades/sell", to: "trades#sell", as: :sell_trade
 
   # --- Admin routes ---
   namespace :admin do
-    resources :users do
+    resources :users, only: [:index, :show] do
       member do
         patch :approve
         patch :revoke
@@ -26,9 +26,15 @@ Rails.application.routes.draw do
     end
   end
 
+  #<%= link_to "Approve", approve_admin_user_path(user), method: :patch %>
+  #<%= link_to "Revoke", revoke_admin_user_path(user), method: :patch %>
+
+
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Root path
-  root "users#show"
+  # Root path (Devise login page)
+  devise_scope :user do
+    root to: "devise/sessions#new"
+  end
 end

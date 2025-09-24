@@ -1,26 +1,40 @@
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin!
+  before_action :set_user, only: [:approve, :revoke, :show]
 
   def index
     @users = User.all
   end
 
+  def show
+  end
+
   def approve
-    user = User.find(params[:id])
-    user.update(approved: true)
-    redirect_to admin_users_path, notice: "#{user.username} approved as trader."
+    if @user.trader?
+      redirect_to admin_users_path, alert: "#{@user.username} is already a trader."
+    else
+      @user.update!(role: :trader, approval_date: Time.current)
+      redirect_to admin_users_path, notice: "#{@user.username} approved as trader."
+    end
   end
 
   def revoke
-    user = User.find(params[:id])
-    user.update(approved: false)
-    redirect_to admin_users_path, alert: "#{user.username}'s approval revoked."
+    if @user.trader?
+      @user.update!(role: :pending_trader, approval_date: nil)
+      redirect_to admin_users_path, alert: "#{@user.username}'s approval revoked."
+    else
+      redirect_to admin_users_path, alert: "#{@user.username} is not a trader."
+    end
   end
 
   private
 
   def ensure_admin!
-    redirect_to root_path, alert: "Not authorized" unless current_user&.role == "admin"
+    redirect_to root_path, alert: "Not authorized" unless current_user&.admin?
+  end
+
+  def set_user
+    @user = User.find(params[:id])
   end
 end
