@@ -73,3 +73,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_23_124735) do
   add_foreign_key "portfolios", "users"
   add_foreign_key "wallets", "users"
 end
+
