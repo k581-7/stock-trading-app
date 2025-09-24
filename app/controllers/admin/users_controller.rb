@@ -15,7 +15,11 @@ class Admin::UsersController < ApplicationController
       redirect_to admin_users_path, alert: "#{@user.username} is already a trader."
     else
       @user.update!(role: :trader, approval_date: Time.current)
-      redirect_to admin_users_path, notice: "#{@user.username} approved as trader."
+
+      # Send approval email
+      TraderMailer.approval_email(@user).deliver_now
+
+      redirect_to admin_users_path, notice: "#{@user.username} approved as trader and email sent!"
     end
   end
 
