@@ -3,7 +3,8 @@ Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }
-  root "portfolio#index"
+  # root "portfolio#index"
+  root "stocks#test_quote"
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
@@ -30,6 +31,8 @@ Rails.application.routes.draw do
 
   # <%= link_to "Approve", approve_admin_user_path(user), method: :patch %>
   # <%= link_to "Revoke", revoke_admin_user_path(user), method: :patch %>
+
+  get "test_quote", to: "stocks#test_quote"
 
 
   # Health check

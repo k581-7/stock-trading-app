@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_23_124735) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_24_160030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,9 +27,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_23_124735) do
   create_table "stocks", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title", null: false
-    t.decimal "buying_price", null: false
-    t.decimal "selling_price", null: false
+    t.string "symbol", null: false
+    t.string "name"
+    t.decimal "current_price", precision: 15, scale: 2
+    t.datetime "last_updated_at"
   end
 
   create_table "trade_logs", force: :cascade do |t|
@@ -73,4 +74,3 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_23_124735) do
   add_foreign_key "portfolios", "users"
   add_foreign_key "wallets", "users"
 end
-

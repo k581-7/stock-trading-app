@@ -2,9 +2,8 @@ class Stock < ApplicationRecord
   has_many :portfolios, dependent: :destroy
   has_many :users, through: :portfolios
 
-  validates :title, presence: true
-  validates :buying_price, presence: true, numericality: { greater_than: 0 }
-  validates :selling_price, presence: true, numericality: { greater_than: 0 }
+  validates :symbol, presence: true, uniqueness: true
+
 
   def profit_margin
     selling_price - buying_price
