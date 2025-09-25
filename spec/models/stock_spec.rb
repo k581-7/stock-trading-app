@@ -1,33 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe Stock, type: :model do
+  subject { described_class.new(name: "Apple", symbol: "AAPL", current_price: 120.0) }
+
   describe 'validations' do
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:symbol) }
+    it { should validate_uniqueness_of(:symbol) }
+
     it 'is valid with valid attributes' do
-      stock = Stock.new(title: "Apple", buying_price: 100.0, selling_price: 120.0)
-      expect(stock).to be_valid
+      expect(subject).to be_valid
     end
 
-    it 'is invalid without title' do
-      stock = Stock.new(buying_price: 100.0, selling_price: 120.0)
-      expect(stock).to_not be_valid
+    it 'is invalid without name' do
+      subject.name = nil
+      expect(subject).to_not be_valid
     end
 
-    it 'is invalid with negative buying_price' do
-      stock = Stock.new(title: "Apple", buying_price: -10.0, selling_price: 120.0)
-      expect(stock).to_not be_valid
-    end
-
-    it 'is invalid with negative selling_price' do
-      stock = Stock.new(title: "Apple", buying_price: 100.0, selling_price: -10.0)
-      expect(stock).to_not be_valid
-    end
-  end
-
-  describe '#profit_margin' do
-    let(:stock) { Stock.create!(title: "Apple", buying_price: 100.0, selling_price: 120.0) }
-
-    it 'calculates profit margin correctly' do
-      expect(stock.profit_margin).to eq(20.0)
+    it 'is invalid with negative current_price' do
+      subject.current_price = -10.0
+      expect(subject).to_not be_valid
     end
   end
 end

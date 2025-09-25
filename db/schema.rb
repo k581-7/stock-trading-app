@@ -27,9 +27,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_101711) do
   create_table "stocks", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title", null: false
-    t.decimal "buying_price", null: false
-    t.decimal "selling_price", null: false
+    t.string "symbol", null: false
+    t.string "name"
+    t.decimal "current_price", precision: 15, scale: 2
+    t.datetime "last_updated_at"
+    t.decimal "price_change", precision: 10, scale: 2
+    t.decimal "percent_change", precision: 5, scale: 2
+    t.bigint "volume"
+    t.boolean "market_open", default: false
   end
 
   create_table "trade_logs", force: :cascade do |t|

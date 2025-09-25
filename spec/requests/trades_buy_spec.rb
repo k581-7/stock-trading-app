@@ -1,0 +1,43 @@
+require "rails_helper"
+
+RSpec.describe "Trades (buy)", type: :request do
+  def create_user_with_wallet!(balance: 0)
+    user = User.create!(
+      email: "buyer#{SecureRandom.hex(2)}@ex.com",
+      username: "buyer_#{SecureRandom.hex(2)}",
+      password: "Password1!",
+      password_confirmation: "Password1!",
+      confirmed_at: Time.current
+    )
+    user.wallet.update!(balance: balance)
+    user
+  end
+
+  it "POST /trades/buy reduces wallet, creates trade log, and updates portfolio" do
+    stock = Stock.create!(name: "Apple", symbol: "AAPL", current_price: 120.0)
+    user  = create_user_with_wallet!(balance: 1000)
+    sign_in user
+
+    expect {
+      post buy_trade_path, params: { stock_id: stock.id, shares: 3 }
+    }.to change { user.wallet.reload.balance }.from(1000).to(640) # 1000 - (120 * 3)
+     .and change { TradeLog.where(transaction_type: "buy").count }.by(1)
+     .and change { Portfolio.where(user_id: user.id, stock_id: stock.id).exists? }.from(false).to(true)
+
+    expect(response).to redirect_to(trade_logs_path)
+    expect(Portfolio.find_by(user_id: user.id, stock_id: stock.id).quantity.to_i).to eq(3)
+  end
+
+  it "rejects when wallet has insufficient funds" do
+    stock = Stock.create!(name: "Tesla", symbol: "TSLA", current_price: 150.0)
+    user  = create_user_with_wallet!(balance: 100)
+    sign_in user
+
+    post buy_trade_path, params: { stock_id: stock.id, shares: 1 }
+
+    expect(response).to redirect_to(new_trade_path)
+    expect(user.wallet.reload.balance).to eq(100)
+    expect(TradeLog.where(transaction_type: "buy").count).to eq(0)
+    expect(Portfolio.where(user_id: user.id, stock_id: stock.id).exists?).to be false
+  end
+end
