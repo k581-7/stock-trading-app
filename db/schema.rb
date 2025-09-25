@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_24_160030) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_25_143053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -31,6 +31,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_24_160030) do
     t.string "name"
     t.decimal "current_price", precision: 15, scale: 2
     t.datetime "last_updated_at"
+    t.decimal "price_change", precision: 10, scale: 2
+    t.decimal "percent_change", precision: 5, scale: 2
+    t.bigint "volume"
+    t.boolean "market_open", default: false
   end
 
   create_table "trade_logs", force: :cascade do |t|

@@ -1,0 +1,33 @@
+<meta http-equiv="refresh" content="15">
+
+<h1>Stocks</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Symbol</th>
+      <th>Company Name</th>
+      <th>Last Price</th>
+      <th>Change</th>
+      <th>% Change</th>
+      <th>Updated At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @stocks.each do |stock| %>
+      <tr>
+        <td><%= stock.symbol %></td>
+        <td><%= stock.name %></td>
+        <td><%= number_to_currency(stock.current_price) %></td>
+        <td style="color: <%= stock.price_change.to_f >= 0 ? 'green' : 'red' %>;">
+          <%= stock.price_change.to_f >= 0 ? '+' : '' %><%= number_with_precision(stock.price_change, precision: 2) %>
+        </td>
+        <td style="color: <%= stock.percent_change.to_f >= 0 ? 'green' : 'red' %>;">
+          <%= stock.percent_change.to_f >= 0 ? '+' : '' %><%= number_with_precision(stock.percent_change, precision: 2) %>%
+        </td>
+        <td><%= stock.last_updated_at.strftime('%H:%M:%S') %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

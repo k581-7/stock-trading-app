@@ -78,3 +78,6 @@ gem "finnhub_ruby", "~> 2.0.0"
 gem "letter_opener", group: :development
 gem 'whenever', require: false
 
+group :test do
+  gem 'shoulda-matchers', '~> 5.0'
+end
