@@ -4,7 +4,8 @@ Rails.application.routes.draw do
     registrations: "users/registrations"
   }
   # root "portfolio#index"
-  root "stocks#test_quote"
+  # root "stocks#test_quote"
+  root "stocks#index"
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
