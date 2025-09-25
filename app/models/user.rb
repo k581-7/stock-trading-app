@@ -4,12 +4,14 @@ class User < ApplicationRecord
          :confirmable
 
   enum :role, { admin: 0, trader: 1, broker: 2 }
+  enum :broker_status, { no_application: 0, broker_pending: 1, broker_approved: 2, broker_rejected: 3 }
+
 
   before_create :set_default_role
   before_update :set_approval_date, if: :will_save_change_to_role?
 
   def approved?
-    broker? || admin?
+    approved
   end
 
   private
