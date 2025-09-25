@@ -7,7 +7,7 @@ class User < ApplicationRecord
 
   # --- Enums ---
   enum :role, { admin: 0, trader: 1, broker: 2 }
-  # enum :broker_status, { none: 0, pending: 1, approved: 2, rejected: 3 }
+  enum :broker_status, { no_application: 0, broker_pending: 1, broker_approved: 2, broker_rejected: 3 }
 
   # --- Associations ---
   has_one  :wallet,     dependent: :destroy
@@ -21,7 +21,7 @@ class User < ApplicationRecord
 
   # --- Instance methods ---
   def approved?
-    broker? || admin?
+    approved
   end
 
   def ensure_wallet!
