@@ -1,18 +1,22 @@
+# app/models/trade_log.rb
 class TradeLog < ApplicationRecord
-  self.inheritance_column = nil  # disables STI behavior on `transaction_type` column
+  self.inheritance_column = nil
 
-  validates :transaction_type, presence: true, inclusion: { in: %w[buy sell deposit withdraw] }
-  validates :quantity, presence: true, numericality: { greater_than: 0 }
+  VALID_TYPES = %w[buy sell deposit withdraw].freeze
+  before_validation :default_qty_for_cash_ops
+
+  validates :transaction_type, presence: true, inclusion: { in: VALID_TYPES }
   validates :amount, presence: true, numericality: { greater_than: 0 }
 
-  # Updated scope names to reflect new model name
-  scope :buys, -> { where(transaction_type: "buy") }
-  scope :sells, -> { where(transaction_type: "sell") }
-  scope :deposits, -> { where(transaction_type: "deposit") }
-  scope :withdrawals, -> { where(transaction_type: "withdraw") }
+  validates :quantity, presence: true, numericality: { greater_than: 0 },
+           if: -> { %w[buy sell].include?(transaction_type) }
 
-  # Updated method name to avoid confusion with old model
-  def self.total_amount_by_log_type(log_type)
-    where(transaction_type: log_type).sum(:amount)
+  validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0 },
+           if: -> { %w[deposit withdraw].include?(transaction_type) }
+
+  private
+
+  def default_qty_for_cash_ops
+    self.quantity = 0 if %w[deposit withdraw].include?(transaction_type) && quantity.nil?
   end
 end
