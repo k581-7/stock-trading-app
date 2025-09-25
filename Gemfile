@@ -79,5 +79,5 @@ gem "letter_opener", group: :development
 gem 'whenever', require: false
 
 group :test do
-  gem 'shoulda-matchers', '~> 5.0'
+  gem 'shoulda-matchers', '~> 6.5'
 end
