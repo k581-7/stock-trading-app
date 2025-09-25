@@ -10,7 +10,7 @@ class TradesController < ApplicationController
   def buy
     stock  = Stock.find(params[:stock_id])
     shares = BigDecimal(params[:shares].to_s)
-    price  = BigDecimal(stock.buying_price.to_s)
+    price  = BigDecimal(stock.current_price.to_s)
     cost   = shares * price
 
     return redirect_to new_trade_path, alert: "Enter a valid number of shares." if shares <= 0
