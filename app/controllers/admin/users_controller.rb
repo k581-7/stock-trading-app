@@ -4,7 +4,7 @@ class Admin::UsersController < ApplicationController
   before_action :set_user, only: [ :approve, :revoke, :show ]
 
   def index
-    @users = User.all
+    @users = User.where(approved: false)
   end
 
   def show
@@ -13,6 +13,7 @@ class Admin::UsersController < ApplicationController
   def approve
     if @user.trader? && !@user.approved?
       @user.update!(approved: true, approval_date: Time.current)
+      @user.confirm unless @user.confirmed?
       TraderMailer.approval_email(@user).deliver_now
       redirect_to admin_users_path, notice: "#{@user.username} approved as trader and email sent!"
     else

@@ -3,9 +3,9 @@ Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }
-  # root "portfolio#index"
+  root "portfolio#index"
   # root "stocks#test_quote"
-  root "stocks#index"
+  # root "stocks#index"
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)

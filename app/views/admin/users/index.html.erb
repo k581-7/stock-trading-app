@@ -1,2 +1,15 @@
-<h1> YOU MADE IT TO ADMIN PAGE </h1>
+<h1>Admin Dashboard</h1>
+
+<h2>Pending Trader Approvals</h2>
+
+<% @users.where(approved: false).each do |user| %>
+  <p>
+    <%= user.email %>
+    <%= button_to "Approve Trader",
+                  approve_admin_user_path(user),
+                  method: :patch
+                  %>
+  </p>
+<% end %>
+
 <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
