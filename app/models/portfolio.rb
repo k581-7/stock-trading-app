@@ -4,6 +4,8 @@ class Portfolio < ApplicationRecord
 
   validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :user_id, uniqueness: { scope: :stock_id, message: "can only have one portfolio per stock" }
+  validates :stock_id, presence: true
+
 
   def total_buying_value
     quantity * stock.buying_price

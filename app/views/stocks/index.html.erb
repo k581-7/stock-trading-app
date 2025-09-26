@@ -11,6 +11,7 @@
       <th>Change</th>
       <th>% Change</th>
       <th>Updated At</th>
+      <th>Market Status</th> <!-- 🆕 -->
     </tr>
   </thead>
   <tbody>
@@ -26,8 +27,10 @@
           <%= stock.percent_change.to_f >= 0 ? '+' : '' %><%= number_with_precision(stock.percent_change, precision: 2) %>%
         </td>
         <td><%= stock.last_updated_at.strftime('%H:%M:%S') %></td>
+        <td style="color: <%= stock.market_open ? 'green' : 'gray' %>;">
+          <%= stock.market_open ? 'Open' : 'Closed' %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-

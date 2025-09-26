@@ -1,0 +1,19 @@
+<h1>Add to Portfolio</h1>
+
+<%= form_with model: @portfolio, local: true do |f| %>
+  <div>
+    <%= f.label :stock_id, "Select Stock" %><br>
+    <%= f.collection_select :stock_id, @stocks, :id, :symbol %>
+  </div>
+
+  <div>
+    <%= f.label :quantity %><br>
+    <%= f.number_field :quantity, step: 1, min: 1 %>
+  </div>
+
+  <div>
+    <%= f.submit "Add", class: "btn btn-success" %>
+  </div>
+<% end %>
+
+<%= link_to "Back to Portfolio", portfolios_path %>

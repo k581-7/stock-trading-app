@@ -1,3 +1,31 @@
-<h1> YOU LANDED IN THE TRADER PAGE </h1>
+<h1>Current Holdings (<%= @portfolios.count %>)</h1>
+<p>Stocks you own right now with real-time market values</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Symbol</th>
+      <th>Shares Owned</th>
+      <th>Live Price</th>
+      <th>Market Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @portfolios.each do |p| %>
+      <% next unless p.stock %>
+      <% live_price = p.stock.current_price.to_f %>
+      <% market_value = live_price * p.quantity.to_f %>
+
+      <tr>
+        <td><%= p.stock.symbol %></td>
+        <td><%= p.quantity %></td>
+        <td><%= number_to_currency(live_price) %></td>
+        <td><%= number_to_currency(market_value) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Add Stock to Portfolio", new_portfolio_path, class: "btn btn-primary" %>
 
 <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
