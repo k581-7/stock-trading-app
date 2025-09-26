@@ -74,6 +74,10 @@ RSpec.configure do |config|
 
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Warden::Test::Helpers
+  config.before(:suite) { Warden.test_mode! }
+  config.after(:each) { Warden.test_reset! }
+
 end
 
 Shoulda::Matchers.configure do |config|

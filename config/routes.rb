@@ -9,8 +9,10 @@ Rails.application.routes.draw do
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
-  get "/portfolio",           to: "portfolio#show", as: :portfolio
-  get "/portfolio/:stock_id", to: "portfolio#show", as: :show_portfolio
+  get "/portfolio",           to: "portfolio#show", as: :user_portfolio
+  get "/portfolio/:stock_id", to: "portfolio#show", as: :user_portfolio_by_stock
+  resources :portfolios
+
 
   # Transactions
   get "/transactions", to: "transactions#index", as: :transactions
