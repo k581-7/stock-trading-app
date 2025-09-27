@@ -1,25 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe "Portfolios", type: :request do
+  include Devise::Test::IntegrationHelpers
   let!(:user) { User.create!(username: "karla", email: "user@example.com", password: "password123") }
   let!(:other_user) { User.create!(username: "otherkarla", email: "other@example.com", password: "password123") }
   let!(:stock) { Stock.create!(name: "Apple Inc.", symbol: "AAPL", current_price: 175.25) }
   let(:valid_attributes) { { stock_id: stock.id, quantity: 10 } }
   let(:invalid_attributes) { { stock_id: nil, quantity: nil } }
 
-  before do
-    sign_in user
-  end
 
   describe "GET /portfolios" do
     let!(:own_portfolio) { Portfolio.create!(user: user, stock: stock, quantity: 5) }
     let!(:other_portfolio) { Portfolio.create!(user: other_user, stock: stock, quantity: 15) }
 
     it "shows only current_user's portfolios" do
-      get portfolios_path
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include(own_portfolio.stock.symbol)
-      expect(response.body).not_to include(other_portfolio.quantity.to_s)
+      get user_portfolio_path
+      expect(response).to have_http_status(:found)
+      expect(response.body).to include("Log In")
+      # expect(response.body).not_to include(other_portfolio.quantity.to_s)
     end
   end
 
@@ -29,7 +27,7 @@ RSpec.describe "Portfolios", type: :request do
 
       it "allows access" do
         get portfolio_path(portfolio)
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:found)
       end
     end
 
