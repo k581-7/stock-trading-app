@@ -1,6 +1,7 @@
 class PortfolioController < ApplicationController
-  before_action :authenticate_user! 
-  before_action :set_portfolio, only: [:show, :edit, :update, :destroy]
+ before_action :authenticate_user!
+  before_action :set_portfolio, only: [ :show, :edit, :update, :destroy ]
+
   # GET /portfolios
   def index
     @portfolios = current_user.portfolios.includes(:stock)
@@ -19,7 +20,7 @@ class PortfolioController < ApplicationController
   # POST /portfolios
   def create
     @portfolio = current_user.portfolios.new(portfolio_params.except(:user_id))
-    
+
 
     if @portfolio.save
       redirect_to @portfolio, notice: "Portfolio was successfully created."
