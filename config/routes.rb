@@ -3,14 +3,14 @@ Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }
-  root "portfolio#index"
+  root "portfolios#index"
   # root "stocks#test_quote"
   # root "stocks#index"
   
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
-  get "/portfolio",           to: "portfolio#show", as: :user_portfolio
-  get "/portfolio/:stock_id", to: "portfolio#show", as: :user_portfolio_by_stock
+  # get "/portfolios",           to: "portfolios#index", as: :user_portfolio
+  # get "/portfolios/:stock_id", to: "portfolios#show", as: :user_portfolio_by_stock
   resources :portfolios
 
 

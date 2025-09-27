@@ -1,0 +1,25 @@
+<!-- app/views/portfolios/show.html.erb -->
+<h1><%= @portfolio.stock.symbol %> Portfolio</h1>
+
+<p>
+  <strong>Stock:</strong>
+  <%= @portfolio.stock.name %> (<%= @portfolio.stock.symbol %>)
+</p>
+
+<p>
+  <strong>Quantity:</strong>
+  <%= @portfolio.quantity %>
+</p>
+
+<p>
+  <strong>Current Price:</strong>
+  <%= number_to_currency(@portfolio.stock.current_price.to_f) %>
+</p>
+
+<p>
+  <strong>Market Value:</strong>
+  <%= number_to_currency(@portfolio.stock.current_price.to_f * @portfolio.quantity.to_i) %>
+</p>
+
+<%= link_to "Edit", edit_portfolio_path(@portfolio), class: "btn btn-primary" %> |
+<%= link_to "Back", portfolios_path, class: "btn btn-secondary" %>
