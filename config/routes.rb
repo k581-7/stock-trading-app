@@ -29,8 +29,6 @@ Rails.application.routes.draw do
   get  "/wallet",        to: "wallets#show",   as: :wallet
 post "/wallet/top_up", to: "wallets#top_up", as: :top_up_wallet
 post "/wallet/withdraw", to: "wallets#withdraw", as: :withdraw_wallet
-  post "/wallet/top_up", to: "wallets#top_up", as: :top_up_wallet
-
   # User routes
   resources :users, only: [] do
     member do
