@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Portfolios", type: :request do
+  include Devise::Test::IntegrationHelpers
   let!(:user) { User.create!(username: "karla", email: "user@example.com", password: "password123") }
   let!(:other_user) { User.create!(username: "otherkarla", email: "other@example.com", password: "password123") }
   let!(:stock) { Stock.create!(name: "Apple Inc.", symbol: "AAPL", current_price: 175.25) }
