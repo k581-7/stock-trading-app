@@ -12,4 +12,25 @@
   </p>
 <% end %>
 
+<% @users.each do |user| %>
+  <% if user.trader? && user.broker_pending? %>
+    <%= button_to "Approve Broker for #{user.email}",
+        approve_broker_admin_user_path(user),
+        method: :patch,
+        data: { confirm: "Approve broker for #{user.email} and confirm account?" },
+        class: "btn btn-success" %>
+  <% end %>
+<% end %>
+
+<h2>Pending Broker Approvals</h2>
+<% @users.each do |user| %>
+  <% if user.trader? && user.broker_pending? %>
+    <%= button_to "Approve Broker for #{user.email}",
+        approve_broker_admin_user_path(user),
+        method: :patch,
+        data: { confirm: "Approve broker for #{user.email} and confirm account?" },
+        class: "btn btn-success" %>
+  <% end %>
+<% end %>
+
 <%= button_to "Sign out", destroy_user_session_path, method: :delete %>

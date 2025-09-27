@@ -36,6 +36,8 @@ post "/wallet/top_up", to: "wallets#top_up", as: :top_up_wallet
       member do
         patch :approve
         patch :revoke
+        patch :approve_broker
+        patch :reject_broker
       end
     end
   end
