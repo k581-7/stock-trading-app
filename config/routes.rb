@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   root "portfolio#index"
   # root "stocks#test_quote"
   # root "stocks#index"
-
+  
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
   get "/portfolio",           to: "portfolio#show", as: :user_portfolio
@@ -28,7 +28,7 @@ Rails.application.routes.draw do
   # Wallet routes
   get  "/wallet",        to: "wallets#show",   as: :wallet
 post "/wallet/top_up", to: "wallets#top_up", as: :top_up_wallet
-
+post "/wallet/withdraw", to: "wallets#withdraw", as: :withdraw_wallet
 
   # --- Admin routes ---
   namespace :admin do

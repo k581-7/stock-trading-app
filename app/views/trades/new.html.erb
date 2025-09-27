@@ -1,0 +1,36 @@
+<h1>Trade</h1>
+
+<h2>Buy</h2>
+<%= form_with url: buy_trade_path, method: :post, local: true do %>
+  <div>
+    <%= label_tag :stock_id, "Stock" %>
+    <%= select_tag :stock_id, options_for_select(@stocks.map { |s| ["#{s.name} (#{s.symbol}) - #{number_to_currency(s.current_price)}", s.id] }) %>
+  </div>
+  <div>
+    <%= label_tag :shares, "Shares" %>
+    <%= number_field_tag :shares, 1, step: "1", min: "1", required: true %>
+  </div>
+  <%= submit_tag "Buy" %>
+<% end %>
+
+<h2>Sell</h2>
+<%# <% if current_user.approved? %>
+  <%= form_with url: sell_trade_path, method: :post, local: true do %>
+    <div>
+      <%= label_tag :stock_id, "Stock" %>
+      <%= select_tag :stock_id, options_for_select(@stocks.map { |s| ["#{s.name} (#{s.symbol}) - #{number_to_currency(s.current_price)}", s.id] }) %>
+    </div>
+    <div>
+      <%= label_tag :shares, "Shares" %>
+      <%= number_field_tag :shares, 1, step: "1", min: "1", required: true %>
+    </div>
+    <%= submit_tag "Sell" %>
+  <% end %>
+<%# else %>
+  <%# <p class="text-muted">You must be approved to sell stocks.</p> %>
+<%# end %>
+
+<p><%= link_to "Wallet", wallet_path %> | <%= link_to "Logs", trade_logs_path %></p>
+
+<% if flash[:notice] %><p style="color:green;"><%= flash[:notice] %></p><% end %>
+<% if flash[:alert]  %><p style="color:red;"><%= flash[:alert] %></p><% end %>

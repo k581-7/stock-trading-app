@@ -1,6 +1,6 @@
-class PortfoliosController < ApplicationController
-  before_action :authenticate_user! :set_portfolio, only: [:show, :edit, :update, :destroy]
-
+class PortfolioController < ApplicationController
+  before_action :authenticate_user! 
+  before_action :set_portfolio, only: [:show, :edit, :update, :destroy]
   # GET /portfolios
   def index
     @portfolios = current_user.portfolios.includes(:stock)

@@ -1,0 +1,26 @@
+<h1>Wallet</h1>
+
+<p><strong>Balance:</strong> <%= number_to_currency(@wallet.balance) %></p>
+
+<%= form_with url: top_up_wallet_path, method: :post, local: true do |f| %>
+  <div>
+    <%= label_tag :amount, "Top up amount" %>
+    <%= number_field_tag :amount, nil, step: "0.01", min: "0.01", required: true %>
+  </div>
+  <%= submit_tag "Top up" %>
+<% end %>
+
+<p><%= link_to "Trade", new_trade_path %> | <%= link_to "Logs", trade_logs_path %></p>
+
+<h5>Withdraw Funds</h5>
+<%= form_with url: withdraw_wallet_path, method: :post, local: true do |f| %>
+  <div class="mb-2">
+    <%= f.label :amount, "Amount to withdraw" %>
+    <%= f.number_field :amount, step: 0.01, class: "form-control" %>
+  </div>
+  <%= f.submit "Withdraw", class: "btn btn-danger" %>
+<% end %>
+
+<% if flash[:notice] %><p style="color:green;"><%= flash[:notice] %></p><% end %>
+<% if flash[:alert]  %><p style="color:red;"><%= flash[:alert] %></p><% end %>
+
