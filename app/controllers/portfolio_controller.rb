@@ -4,7 +4,6 @@ class PortfolioController < ApplicationController
 
   # GET /portfolios
   def index
-    Rails.logger.info "current_user => #{current_user.inspect}"
     @portfolios = current_user.portfolios.includes(:stock)
   end
 
