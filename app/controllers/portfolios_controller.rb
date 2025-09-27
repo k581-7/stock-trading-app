@@ -2,24 +2,20 @@ class PortfoliosController < ApplicationController
   before_action :authenticate_user!
   before_action :set_portfolio, only: [:show, :edit, :update, :destroy]
   before_action :authorize_portfolio, only: [:show, :edit, :update, :destroy]
-
   def index
     @portfolios = current_user.portfolios.includes(:stock)
     @user = current_user
   end
-
   def show
     @portfolio = Portfolio.find(params[:id])
     if @portfolio.user != current_user
       redirect_to portfolios_path, alert: "Not authorized"
     end
   end
-
   def new
     @portfolio = current_user.portfolios.new
     @stocks = Stock.all
   end
-
   def create
     @portfolio = current_user.portfolios.new(portfolio_params)
     if @portfolio.save
@@ -29,11 +25,9 @@ class PortfoliosController < ApplicationController
       render :new, status: :unprocessable_entity
     end
   end
-
   def edit
     # @portfolio is already loaded and authorized
   end
-
   def update
     if @portfolio.update(portfolio_params)
       redirect_to @portfolio, notice: "Portfolio updated successfully."
@@ -41,28 +35,22 @@ class PortfoliosController < ApplicationController
       render :edit, status: :unprocessable_entity
     end
   end
-
   def destroy
     if @portfolio.user_id != current_user.id
       redirect_to portfolios_path, alert: "Not authorized" and return
     end
-
     @portfolio.destroy
     redirect_to portfolios_path, notice: "Portfolio deleted successfully."
   end
-
   private
-
   def set_portfolio
     @portfolio = Portfolio.find(params[:id])
   end
-
   def authorize_portfolio
     unless @portfolio.user_id == current_user.id
       redirect_to portfolios_path, alert: "Not authorized" and return
     end
   end
-
   def portfolio_params
     params.require(:portfolio).permit(:stock_id, :quantity)
   end
