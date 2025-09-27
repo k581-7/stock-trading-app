@@ -1,0 +1,20 @@
+<div class="container mt-4">
+  <h1 class="mb-4">Trader Dashboard</h1>
+
+  <div class="row">
+    <div class="col-md-4">
+      <%= render 'portfolios/summary', portfolio: @portfolio, value: @portfolio_value, day_pl: @day_pl, total: @total_trades, buys: @buy_trades, sells: @sell_trades %>
+    </div>
+     <!-- ✅ Add Market Overview here -->
+  <%= render 'dashboard/market_overview', stocks: @stocks %>
+    <%# <div class="col-md-4">
+      <%= render 'wallets/overview', wallet: @wallet %> %>
+    </div>
+    <div class="col-md-4">
+      <%= render 'trades/actions' %>
+    </div>
+  </div>
+
+ 
+
+ 

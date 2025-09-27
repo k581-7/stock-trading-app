@@ -1,0 +1,21 @@
+<div class="card mb-4">
+  <div class="card-header bg-dark text-white">Market Overview</div>
+  <div class="card-body">
+    <div class="row row-cols-2 row-cols-md-3 g-3">
+      <% stocks.each do |stock| %>
+        <div class="col">
+          <div class="border rounded p-2 text-center">
+            <h6 class="mb-1"><%= stock.symbol %></h6>
+            <p class="mb-0 text-muted"><%= stock.name %></p>
+            <p class="mb-0 fw-bold">
+              <%= number_to_currency(stock.current_price) %>
+              <span class="<%= stock.price_change.to_f >= 0 ? 'text-success' : 'text-danger' %>">
+                (<%= stock.price_change.to_f >= 0 ? '+' : '' %><%= number_to_percentage(stock.price_change, precision: 2) %>)
+              </span>
+            </p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

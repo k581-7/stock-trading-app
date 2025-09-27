@@ -1,0 +1,31 @@
+<h2 class="mt-5 mb-3">Your Activity</h2>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" data-bs-toggle="tab" href="#trade" role="tab">
+      Trade History (<%= trade_history.count %>)
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-bs-toggle="tab" href="#wallet" role="tab">
+      Wallet Activity (<%= wallet_logs.count %>)
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-bs-toggle="tab" href="#all" role="tab">
+      All Activity (<%= trade_logs.count %>)
+    </a>
+  </li>
+</ul>
+
+<div class="tab-content mt-3">
+  <div class="tab-pane fade show active" id="trade" role="tabpanel">
+    <%= render 'trade_logs/table', logs: trade_history %>
+  </div>
+  <div class="tab-pane fade" id="wallet" role="tabpanel">
+    <%= render 'trade_logs/table', logs: wallet_logs %>
+  </div>
+  <div class="tab-pane fade" id="all" role="tabpanel">
+    <%= render 'trade_logs/table', logs: trade_logs %>
+  </div>
+</div>

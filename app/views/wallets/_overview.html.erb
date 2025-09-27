@@ -1,0 +1,8 @@
+<div class="card mb-4">
+  <div class="card-header bg-warning">Wallet Overview</div>
+  <div class="card-body">
+    <p><strong>Balance:</strong> <%= number_to_currency(wallet.balance) %></p>
+    <%= link_to 'Top Up', wallet_path, class: 'btn btn-success btn-sm' %>
+    <%= link_to 'Withdraw', wallet_path, class: 'btn btn-danger btn-sm' %>
+  </div>
+</div>

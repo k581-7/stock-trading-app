@@ -13,7 +13,8 @@ Rails.application.routes.draw do
   # get "/portfolios/:stock_id", to: "portfolios#show", as: :user_portfolio_by_stock
   resources :portfolios
 
-
+  #dashboard
+  get "dashboard", to: "dashboard#index"
   # Transactions
   get "/transactions", to: "transactions#index", as: :transactions
 
