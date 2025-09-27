@@ -1,10 +1,11 @@
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin!
-  before_action :set_user, only: [ :approve, :revoke, :show ]
+  before_action :set_user, only: [ :approve, :revoke, :show, :approve_broker, :reject_broker ]
 
   def index
     @users = User.where(approved: false)
+    @pending_brokers = User.where(broker_status: :broker_pending, role: :trader)
   end
 
   def show
@@ -33,7 +34,6 @@ class Admin::UsersController < ApplicationController
   def approve_broker
     if @user.trader? && @user.broker_pending?
       @user.update!(broker_status: :broker_approved, broker_approval_date: Time.current)
-      BrokerMailer.approval_email(@user).deliver_now
       redirect_to admin_users_path, notice: "#{@user.username} approved as broker and email sent!"
     else
       redirect_to admin_users_path, alert: "Cannot approve broker for this user."

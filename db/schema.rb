@@ -43,6 +43,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_035450) do
     t.string "transaction_type", null: false
     t.decimal "quantity", null: false
     t.decimal "amount", null: false
+    t.bigint "user_id"
+    t.bigint "wallet_id"
+    t.bigint "stock_id"
+    t.index ["stock_id"], name: "index_trade_logs_on_stock_id"
+    t.index ["user_id"], name: "index_trade_logs_on_user_id"
+    t.index ["wallet_id"], name: "index_trade_logs_on_wallet_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -62,6 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_035450) do
     t.string "unconfirmed_email"
     t.integer "role", default: 1
     t.integer "broker_status", default: 0
+    t.datetime "broker_approval_date"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -71,7 +78,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_035450) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.decimal "balance", null: false
+    t.decimal "balance", precision: 15, scale: 2, default: "0.0", null: false
+    t.string "currency", default: "USD", null: false
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 

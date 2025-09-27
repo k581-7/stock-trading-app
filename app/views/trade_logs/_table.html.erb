@@ -1,0 +1,39 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Type</th>
+      <th>Details</th>
+      <th>Amount</th>
+      <th>Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% logs.each do |log| %>
+      <tr>
+        <td><%= log.created_at.strftime("%b %d, %Y %I:%M %p") %></td>
+        <td><%= log.transaction_type.capitalize %></td>
+        <td>
+          <% if log.transaction_type.in?(%w[buy sell]) %>
+            <%= "#{log.transaction_type.capitalize} #{log.quantity} shares of #{log.stock&.symbol}" %>
+          <% elsif log.transaction_type == "deposit" %>
+            <%# Deposit via <%= log.source.presence || "bank transfer" %>
+          <% elsif log.transaction_type == "withdraw" %>
+            Withdrawal to linked account
+            <%# Withdrawal to <%= log.destination.presence || "linked account" %> 
+          <% else %>
+            —
+          <% end %>
+        </td>
+        <td>
+          <% if log.transaction_type == "deposit" || log.transaction_type == "sell" %>
+            <span class="text-success">+<%= number_to_currency(log.amount) %></span>
+          <% else %>
+            <span class="text-danger">-<%= number_to_currency(log.amount) %></span>
+          <% end %>
+        </td>
+        <td><%= number_to_currency(log.wallet&.balance || 0) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,5 +1,8 @@
-# app/models/trade_log.rb
 class TradeLog < ApplicationRecord
+  belongs_to :user
+  belongs_to :stock, optional: true
+  belongs_to :wallet, optional: true
+
   self.inheritance_column = nil
 
   VALID_TYPES = %w[buy sell deposit withdraw].freeze
@@ -13,6 +16,16 @@ class TradeLog < ApplicationRecord
 
   validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0 },
            if: -> { %w[deposit withdraw].include?(transaction_type) }
+
+  scope :buys, -> { where(transaction_type: 'buy') }
+  scope :sells, -> { where(transaction_type: 'sell') }
+  scope :deposits, -> { where(transaction_type: 'deposit') }
+  scope :withdrawals, -> { where(transaction_type: 'withdraw') }
+  scope :for_user, ->(user) { where(user: user) }
+
+  def self.total_amount_by_log_type(type)
+    where(transaction_type: type).sum(:amount)
+  end
 
   private
 
