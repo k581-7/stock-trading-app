@@ -28,6 +28,6 @@
 
 <%= button_to "Apply to be a broker",apply_broker_user_path(current_user), method: :patch, class: "btn btn-primary" %>
 
-<%= link_to "Add Stock to Portfolio", new_portfolio_path, class: "btn btn-primary" %>
+<%= link_to "Add Stock to Portfolio", new_trade_path, class: "btn btn-primary" %>
 
 <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
