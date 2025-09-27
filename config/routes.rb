@@ -22,13 +22,19 @@ Rails.application.routes.draw do
   post "/trades/buy", to: "trades#buy",  as: :buy_trade
   post "/trades/sell", to: "trades#sell", as: :sell_trade
 
-  
+
   get "/trade_logs", to: "trade_logs#index", as: :trade_logs
 
   # Wallet routes
   get  "/wallet",        to: "wallets#show",   as: :wallet
-post "/wallet/top_up", to: "wallets#top_up", as: :top_up_wallet
+  post "/wallet/top_up", to: "wallets#top_up", as: :top_up_wallet
 
+  # User routes
+  resources :users, only: [] do
+    member do
+      patch :apply_broker
+    end
+  end
 
   # --- Admin routes ---
   namespace :admin do

@@ -26,7 +26,7 @@
   </tbody>
 </table>
 
-<%= link_to "Apply to be a broker", approve_broker_admin_user_path(user), method: :patch, class: "btn btn-primary" %>
+<%= button_to "Apply to be a broker",apply_broker_user_path(current_user), method: :patch, class: "btn btn-primary" %>
 
 <%= link_to "Add Stock to Portfolio", new_portfolio_path, class: "btn btn-primary" %>
 
