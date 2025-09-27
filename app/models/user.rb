@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_one  :wallet,     dependent: :destroy
   has_many :portfolios, dependent: :destroy
   has_many :stocks, through: :portfolios
+  has_many :trade_logs, dependent: :destroy
 
   # --- Callbacks ---
   after_create :ensure_wallet!

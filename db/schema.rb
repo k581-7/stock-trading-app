@@ -43,6 +43,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_043418) do
     t.string "transaction_type", null: false
     t.decimal "quantity", null: false
     t.decimal "amount", null: false
+    t.bigint "user_id"
+    t.bigint "wallet_id"
+    t.bigint "stock_id"
+    t.index ["stock_id"], name: "index_trade_logs_on_stock_id"
+    t.index ["user_id"], name: "index_trade_logs_on_user_id"
+    t.index ["wallet_id"], name: "index_trade_logs_on_wallet_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -72,7 +78,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_043418) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.decimal "balance", null: false
+    t.decimal "balance", precision: 15, scale: 2, default: "0.0", null: false
+    t.string "currency", default: "USD", null: false
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 

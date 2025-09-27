@@ -1,5 +1,5 @@
 class PortfolioController < ApplicationController
-  before_action :authenticate_user!
+ before_action :authenticate_user!
   before_action :set_portfolio, only: [ :show, :edit, :update, :destroy ]
 
   # GET /portfolios

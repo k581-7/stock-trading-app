@@ -1,0 +1,5 @@
+<% if current_user.approved? %>
+  <span class="badge badge-success">Trader Approved</span>
+<% else %>
+  <span class="badge badge-warning">Approval Pending</span>
+<% end %>

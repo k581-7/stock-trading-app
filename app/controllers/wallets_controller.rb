@@ -11,16 +11,41 @@ class WalletsController < ApplicationController
     amount = params[:amount].to_d
     if amount > 0
       current_user.ensure_wallet!
-
-      # increase balance
       current_user.wallet.update!(balance: current_user.wallet.balance + amount)
 
-      # write trade log (quantity defaults to 0 for deposits)
-      TradeLog.create!(transaction_type: "deposit", amount: amount)
+      TradeLog.create!(
+        user: current_user,
+        wallet: current_user.wallet,
+        transaction_type: "deposit",
+        amount: amount,
+        quantity: 0
+      )
 
       redirect_to wallet_path, notice: "Added #{helpers.number_to_currency(amount)} to wallet."
     else
       redirect_to wallet_path, alert: "Enter a valid amount."
+    end
+  end
+
+  def withdraw
+    amount = params[:amount].to_d
+    current_user.ensure_wallet!
+    wallet = current_user.wallet
+
+    if amount > 0 && wallet.balance >= amount
+      wallet.update!(balance: wallet.balance - amount)
+
+      TradeLog.create!(
+        user: current_user,
+        wallet: wallet,
+        transaction_type: "withdraw",
+        amount: amount,
+        quantity: 0
+      )
+
+      redirect_to wallet_path, notice: "Withdrew #{helpers.number_to_currency(amount)} from wallet."
+    else
+      redirect_to wallet_path, alert: "Invalid amount or insufficient balance."
     end
   end
 end
