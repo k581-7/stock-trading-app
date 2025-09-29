@@ -10,4 +10,3 @@ class UpdateStocksTableWithSymbolAndPrices < ActiveRecord::Migration[8.0]
     add_column :stocks, :last_refreshed, :datetime
   end
 end
-sudo service postgresql status
