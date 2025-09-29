@@ -1,32 +1,80 @@
-<h1>Current Holdings (<%= @portfolios.count %>)</h1>
-<p>Stocks you own right now with real-time market values</p>
+<div class="container mt-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold">📊 Current Holdings (<%= @portfolios.count %>)</h1>
+      <p class="text-muted">Your live portfolio with real-time market values</p>
+    </div>
+    <div>
+      <%= button_to "Apply to be a Broker", apply_broker_user_path(current_user), 
+          method: :patch, class: "btn btn-outline-success me-2" %>
+      <%= link_to "➕ Add Stock (Trade)", new_trade_path, class: "btn btn-primary me-2" %>
+      <%= link_to "➕ Add Stock (Portfolio)", new_portfolio_path, class: "btn btn-secondary me-2" %>
+      <%= button_to "🚪 Sign out", destroy_user_session_path, 
+          method: :delete, class: "btn btn-danger" %>
+    </div>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Symbol</th>
-      <th>Shares Owned</th>
-      <th>Live Price</th>
-      <th>Market Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @portfolios.each do |p| %>
-      <% next unless p.stock %>
-      <% live_price = p.stock.current_price.to_f %>
-      <% market_value = live_price * p.quantity.to_f %>
+  <!-- Portfolio Table -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Symbol</th>
+            <th>Shares Owned</th>
+            <th>Live Price</th>
+            <th>Price Change</th>
+            <th>% Change</th>
+            <th>Market Value</th>
+            <th>Last Updated</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% total_value = 0 %>
+          <% @portfolios.each do |p| %>
+            <% next unless p.stock %>
+            <% live_price = p.stock.current_price.to_f %>
+            <% market_value = live_price * p.quantity.to_f %>
+            <% total_value += market_value %>
 
-      <tr>
-        <td><%= p.stock.symbol %></td>
-        <td><%= p.quantity %></td>
-        <td><%= number_to_currency(live_price) %></td>
-        <td><%= number_to_currency(market_value) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+            <tr>
+              <td class="fw-bold"><%= p.stock.symbol %></td>
+              <td><%= p.quantity %></td>
+              <td class="text-success"><%= number_to_currency(live_price) %></td>
 
-<%= button_to "Apply to be a broker",apply_broker_user_path(current_user), method: :patch, class: "btn btn-primary" %>
-<%= link_to "Add Stock to Portfolio", new_trade_path, class: "btn btn-primary" %>
-<%= link_to "Add Stock to Portfolio", new_portfolio_path, class: "btn btn-primary" %>
-<%= button_to "Sign out", destroy_user_session_path, method: :delete %>
+              <!-- Price change -->
+              <td style="color: <%= p.stock.price_change.to_f >= 0 ? 'green' : 'red' %>;">
+                <%= p.stock.price_change.to_f >= 0 ? '▲ +' : '▼ ' %>
+                <%= number_with_precision(p.stock.price_change, precision: 2) %>
+              </td>
+
+              <!-- Percent change -->
+              <td style="color: <%= p.stock.percent_change.to_f >= 0 ? 'green' : 'red' %>;">
+                <%= p.stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
+                <%= number_with_precision(p.stock.percent_change, precision: 2) %>%
+              </td>
+
+              <td class="fw-semibold"><%= number_to_currency(market_value) %></td>
+
+              <!-- Last updated -->
+              <td><%= p.stock.last_updated_at.strftime('%H:%M:%S') %></td>
+
+              <!-- Market status -->
+              <td style="color: <%= p.stock.market_open ? 'green' : 'gray' %>;">
+                <%= p.stock.market_open ? 'Open' : 'Closed' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot class="table-light">
+          <tr>
+            <th colspan="5" class="text-end">Total Portfolio Value:</th>
+            <th colspan="3" class="fw-bold"><%= number_to_currency(total_value) %></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
