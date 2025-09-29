@@ -7,7 +7,6 @@ class PortfoliosController < ApplicationController
     @user = current_user
   end
   def show
-    @portfolio = Portfolio.find(params[:id])
     if @portfolio.user != current_user
       redirect_to portfolios_path, alert: "Not authorized"
     end
@@ -44,7 +43,7 @@ class PortfoliosController < ApplicationController
   end
   private
   def set_portfolio
-    @portfolio = Portfolio.find(params[:id])
+    @portfolio = Portfolio.includes(:stocks).find(params[:id])
   end
   def authorize_portfolio
     unless @portfolio.user_id == current_user.id
