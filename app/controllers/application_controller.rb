@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def after_sign_in_path_for(resource)
-    resource.admin? ? admin_users_path : portfolio_path
+    resource.admin? ? admin_users_path : portfolios_path
   end
 
   def configure_permitted_parameters

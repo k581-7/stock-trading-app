@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }
-  root "portfolios#index"
+  root "dashboard#index"
   # root "stocks#test_quote"
   # root "stocks#index"
   
