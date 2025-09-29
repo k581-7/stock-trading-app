@@ -1,8 +1,10 @@
 <h1>Admin Dashboard</h1>
 
+<%= link_to "Create new user", new_admin_user_path %>
+
 <h2>Pending Trader Approvals</h2>
 
-<% @users.where(approved: false).each do |user| %>
+<% @users.where(approved: false, role: "trader").each do |user| %>
   <p>
     <%= user.email %>
     <%= button_to "Approve Trader",
@@ -22,6 +24,20 @@
         data: { confirm: "Approve broker for #{user.email} and confirm account?" },
         class: "btn btn-success" %>
   <% end %>
+<% end %>
+
+<h2> All Traders Overview </h2>
+<% @allusers.where(role: "trader").each do |user| %>
+  <p>
+    <strong><%= user.email %></strong> - 
+    Username: <%= user.username %> -
+    Approved: <%= user.approved? ? "Yes" : "No" %> - 
+    Approval Date: <%= user.approval_date %> -
+    Broker Status: <%= user.broker_status.humanize %>
+    <%= link_to "Show", admin_user_path(user) %>
+    <%= link_to "Edit", edit_admin_user_path(user) %>
+    <%= button_to "Delete", delete_admin_user_path(user), method: :delete %>
+  </p>
 <% end %>
 
 

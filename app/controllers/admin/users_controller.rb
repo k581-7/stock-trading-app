@@ -1,14 +1,48 @@
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin!
-  before_action :set_user, only: [ :approve, :revoke, :show, :approve_broker, :reject_broker ]
+  before_action :set_user, only: [ :approve, :revoke, :show, :approve_broker, :reject_broker, :show, :edit, :update, :delete ]
 
   def index
+    @allusers = User.all
     @users = User.where(approved: false)
     @pending_brokers = User.where(broker_status: :broker_pending, role: :trader)
   end
 
+  def new
+    @user = User.new
+  end
+
+  def create
+    @user = User.new(user_params)
+    if @user.save
+      @user.confirm
+      redirect_to admin_user_path(@user), notice: "User created successfully."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   def show
+    @user
+  end
+
+  def edit
+    @user
+  end
+
+  def update
+    if @user.update(user_edit_params)
+      redirect_to admin_user_path(@user), notice: "User updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+
+  def delete
+    @user.destroy
+    redirect_to admin_users_path, notice: "User deleted."
   end
 
   def approve
@@ -57,5 +91,13 @@ class Admin::UsersController < ApplicationController
 
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.require(:user).permit(:email, :username, :password, :approved)
+  end
+
+  def user_edit_params
+    params.require(:user).permit(:email, :username)
   end
 end
