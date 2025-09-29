@@ -73,7 +73,7 @@ gem "dotenv-rails", groups: [ :development, :test ]
 gem "devise"
 gem "devise-jwt"
 
-gem "finnhub_ruby", "~> 2.0.0"
+gem "finnhub_ruby", "~> 2.0.3"
 
 gem "letter_opener", group: :development
 gem 'whenever', require: false
