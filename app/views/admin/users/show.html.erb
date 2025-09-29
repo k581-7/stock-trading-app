@@ -3,3 +3,11 @@
 <% else %>
   <span class="badge badge-warning">Approval Pending</span>
 <% end %>
+
+<%= @user.username %> <br />
+<%= @user.email %> <br />
+<%= @user.approved? ? "Yes" : "No" %> <br />
+<%= @user.approval_date %>
+
+<%= link_to "Back", admin_users_path %>
+
