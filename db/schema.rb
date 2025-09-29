@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_27_043418) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_29_171205) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,7 +44,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_043418) do
     t.decimal "quantity", null: false
     t.decimal "amount", null: false
     t.bigint "user_id", null: false
+    t.bigint "stock_id", null: false
+    t.bigint "wallet_id", null: false
+    t.index ["stock_id"], name: "index_trade_logs_on_stock_id"
     t.index ["user_id"], name: "index_trade_logs_on_user_id"
+    t.index ["wallet_id"], name: "index_trade_logs_on_wallet_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -74,11 +78,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_043418) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.decimal "balance", null: false
+    t.decimal "balance", precision: 15, scale: 2, default: "0.0", null: false
+    t.string "currency", default: "USD", null: false
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 
   add_foreign_key "portfolios", "stocks"
   add_foreign_key "portfolios", "users"
+  add_foreign_key "trade_logs", "stocks"
+  add_foreign_key "trade_logs", "users"
+  add_foreign_key "trade_logs", "wallets"
   add_foreign_key "wallets", "users"
 end
