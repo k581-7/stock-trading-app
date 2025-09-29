@@ -3,7 +3,11 @@ require "finnhub_ruby"
 class UpdateStockPricesJob < ApplicationJob
   queue_as :default
 
-  def perform
+def perform
+  FinnhubRuby.configure do |config|
+    config.api_key["api_key"] = ENV["FINNHUB_API_KEY"]
+  end
+
     client = FinnhubRuby::DefaultApi.new
 
     Stock.find_each do |stock|
