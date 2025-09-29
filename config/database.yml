@@ -14,7 +14,10 @@ test:
   
 production:
   <<: *default
-  url: <%= ENV["DATABASE_URL"] %>
+  database: stock_trading_app
+  username: <%= ENV["POSTGRES_USERNAME"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  host: localhost
 cable:
   <<: *default
   url: <%= ENV["DATABASE_URL"] %>
