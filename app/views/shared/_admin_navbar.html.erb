@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary px-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">PNM Admin</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="adminNavbar">
+      <!-- Left-side nav links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <%= link_to 'Dashboard', '#', class: 'nav-link active' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to 'All Users', '#', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to 'Pending Approvals', '#', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to 'Transactions', '#', class: 'nav-link' %>
+        </li>
+      </ul>
+
+      <!-- Right-side user info and logout -->
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item me-3">
+          <span class="navbar-text text-white">
+            Admin User (<strong>Administrator</strong>)
+          </span>
+        </li>
+        <li class="nav-item">
+         <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

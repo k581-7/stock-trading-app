@@ -1,10 +1,34 @@
-<div class="card mb-4">
-  <div class="card-header bg-primary text-white">Portfolio Overview</div>
-  <div class="card-body">
-    <p><strong>Portfolio Value:</strong> <%= number_to_currency(value) %></p>
-    <p><strong>Day P/L:</strong> <%= number_to_currency(day_pl) %></p>
-    <p><strong>Total Trades:</strong> <%= total %></p>
-    <p><strong>Buy Trades:</strong> <%= buys %></p>
-    <p><strong>Sell Trades:</strong> <%= sells %></p>
+<div class="row g-4 text-center">
+  <!-- Available Balance -->
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h6 class="text-muted">Available Balance</h6>
+        <h2 class="fw-bold text-dark"><%= number_to_currency(@wallet.balance) %></h2>
+        <p class="text-success mb-0">Ready to trade</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Deposits -->
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h6 class="text-muted">Total Deposits</h6>
+        <h2 class="fw-bold text-primary"><%= number_to_currency(@wallet_logs.where(transaction_type: 'deposit').sum(:amount)) %></h2>
+        <p class="text-muted mb-0">All Time</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trading Volume -->
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h6 class="text-muted">Trading Volume</h6>
+        <h2 class="fw-bold text-info"><%= number_to_currency(@trade_history.sum(:amount)) %></h2>
+        <p class="text-muted mb-0">Total Traded</p>
+      </div>
+    </div>
   </div>
 </div>

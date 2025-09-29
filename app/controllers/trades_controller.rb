@@ -4,6 +4,11 @@ class TradesController < ApplicationController
 
   def new
     @stocks = Stock.order(:symbol)
+
+    # Add Top Gainers and Losers for UI display
+    @top_gainers = Stock.where("percent_change > 0").order(percent_change: :desc).limit(3)
+    @top_losers  = Stock.where("percent_change < 0").order(percent_change: :asc).limit(3)
+
   end
 
   def buy
