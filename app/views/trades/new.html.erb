@@ -1,36 +1,85 @@
-<h1>Trade</h1>
+<div class="container mt-4">
+<!-- 📈📉 Gainers & Losers Section -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <div class="row g-4">
+      <!-- Top Gainers -->
+      <div class="col-md-6">
+        <div class="card border-success h-100">
+          <div class="card-header bg-success text-white">
+            <h6 class="mb-0">Top Gainers Today</h6>
+          </div>
+          <div class="card-body">
+            <% @top_gainers.each do |stock| %>
+              <div class="d-flex justify-content-between mb-2">
+                <strong><%= stock.symbol %></strong>
+                <span><%= number_to_currency(stock.current_price) %></span>
+                <span class="text-success">+<%= stock.percent_change %>%</span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
 
-<h2>Buy</h2>
-<%= form_with url: buy_trade_path, method: :post, local: true do %>
-  <div>
-    <%= label_tag :stock_id, "Stock" %>
-    <%= select_tag :stock_id, options_for_select(@stocks.map { |s| ["#{s.name} (#{s.symbol}) - #{number_to_currency(s.current_price)}", s.id] }) %>
-  </div>
-  <div>
-    <%= label_tag :shares, "Shares" %>
-    <%= number_field_tag :shares, 1, step: "1", min: "1", required: true %>
-  </div>
-  <%= submit_tag "Buy" %>
-<% end %>
-
-<h2>Sell</h2>
-<%# <% if current_user.approved? %>
-  <%= form_with url: sell_trade_path, method: :post, local: true do %>
-    <div>
-      <%= label_tag :stock_id, "Stock" %>
-      <%= select_tag :stock_id, options_for_select(@stocks.map { |s| ["#{s.name} (#{s.symbol}) - #{number_to_currency(s.current_price)}", s.id] }) %>
+      <!-- Top Losers -->
+      <div class="col-md-6">
+        <div class="card border-danger h-100">
+          <div class="card-header bg-danger text-white">
+            <h6 class="mb-0">Top Losers Today</h6>
+          </div>
+          <div class="card-body">
+            <% @top_losers.each do |stock| %>
+              <div class="d-flex justify-content-between mb-2">
+                <strong><%= stock.symbol %></strong>
+                <span><%= number_to_currency(stock.current_price) %></span>
+                <span class="text-danger"><%= stock.percent_change %>%</span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <%= label_tag :shares, "Shares" %>
-      <%= number_field_tag :shares, 1, step: "1", min: "1", required: true %>
+  </div>
+</div>
+
+<!-- 📊 Available Stocks Section -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-dark text-white">
+    <h6 class="mb-0">Available Stocks</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>Price</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @stocks.each do |stock| %>
+            <tr>
+              <td><strong><%= stock.symbol %></strong></td>
+              <td><%= stock.name %></td>
+              <td><%= number_to_currency(stock.current_price) %></td>
+              <td class="text-center">
+                <%= form_with url: buy_trade_path, method: :post, class: "d-inline", local: true do %>
+                  <%= hidden_field_tag :stock_id, stock.id %>
+                  <%= hidden_field_tag :shares, 1 %>
+                  <%= submit_tag "Buy", class: "btn btn-sm btn-success me-1" %>
+                <% end %>
+                <%= form_with url: sell_trade_path, method: :post, class: "d-inline", local: true do %>
+                  <%= hidden_field_tag :stock_id, stock.id %>
+                  <%= hidden_field_tag :shares, 1 %>
+                  <%= submit_tag "Sell", class: "btn btn-sm btn-danger" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
-    <%= submit_tag "Sell" %>
-  <% end %>
-<%# else %>
-  <%# <p class="text-muted">You must be approved to sell stocks.</p> %>
-<%# end %>
-
-<p><%= link_to "Wallet", wallet_path %> | <%= link_to "Logs", trade_logs_path %></p>
-
-<% if flash[:notice] %><p style="color:green;"><%= flash[:notice] %></p><% end %>
-<% if flash[:alert]  %><p style="color:red;"><%= flash[:alert] %></p><% end %>
+  </div>
+</div>

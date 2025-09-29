@@ -2,10 +2,17 @@ class WalletsController < ApplicationController
   before_action :authenticate_user!
   skip_forgery_protection if Rails.env.test?  # avoids 422 in test
 
-  def show
-    current_user.ensure_wallet!
-    @wallet = current_user.wallet
+def show
+  @wallet = current_user.wallet
+
+  # Make sure @wallet exists before querying
+  if @wallet
+    @wallet_logs = TradeLog.where(wallet: @wallet).order(created_at: :desc)
+  else
+    @wallet_logs = []
   end
+end
+
 
   def top_up
     amount = params[:amount].to_d

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_29_115849) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_043418) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,9 +43,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_29_115849) do
     t.string "transaction_type", null: false
     t.decimal "quantity", null: false
     t.decimal "amount", null: false
+    t.bigint "user_id"
     t.bigint "wallet_id"
     t.bigint "stock_id"
-    t.bigint "user_id", null: false
     t.index ["stock_id"], name: "index_trade_logs_on_stock_id"
     t.index ["user_id"], name: "index_trade_logs_on_user_id"
     t.index ["wallet_id"], name: "index_trade_logs_on_wallet_id"
@@ -85,6 +85,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_29_115849) do
 
   add_foreign_key "portfolios", "stocks"
   add_foreign_key "portfolios", "users"
-  add_foreign_key "trade_logs", "users"
   add_foreign_key "wallets", "users"
 end
