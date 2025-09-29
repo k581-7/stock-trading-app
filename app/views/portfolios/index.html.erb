@@ -1,29 +1,66 @@
+<meta http-equiv="refresh" content="15">
+
 <div class="container mt-4">
+
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="fw-bold">📊 Current Holdings (<%= @portfolios.count %>)</h1>
-      <p class="text-muted">Your live portfolio with real-time market values</p>
+  <h2 class="fw-semibold text-dark">📊 Current Holdings (<%= @portfolios.count %>)</h2>
+  <p class="text-dark medium">Stocks you own right now with real-time market values</p>
     </div>
     <div>
       <%= button_to "Apply to be a Broker", apply_broker_user_path(current_user), 
           method: :patch, class: "btn btn-outline-success me-2" %>
-      <%= link_to "➕ Add Stock (Trade)", new_trade_path, class: "btn btn-primary me-2" %>
-      <%= link_to "➕ Add Stock (Portfolio)", new_portfolio_path, class: "btn btn-secondary me-2" %>
-      <%= button_to "🚪 Sign out", destroy_user_session_path, 
-          method: :delete, class: "btn btn-danger" %>
+      <%= link_to "Trade", new_trade_path, class: "btn btn-primary me-2" %>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card bg-dark text-white shadow-sm">
+        <div class="card-body">
+          <h6 class="text-white">Total Portfolio Value</h6>
+          <% total_value = @portfolios.sum { |p| p.stock&.current_price.to_f * p.quantity.to_f } %>
+          <h3 class="fw-bold text-info"><%= number_to_currency(total_value) %></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card bg-dark text-white shadow-sm">
+        <div class="card-body">
+          <h6 class="text-white">Total Gain/Loss</h6>
+          <% total_gain_loss = @portfolios.sum { |p| (p.stock&.price_change.to_f) * p.quantity.to_f } %>
+          <h3 class="fw-bold <%= total_gain_loss >= 0 ? 'text-success' : 'text-danger' %>">
+            <%= number_to_currency(total_gain_loss) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card bg-dark text-white shadow-sm">
+        <div class="card-body">
+          <h6 class="text-white">Total Return</h6>
+          <% total_return = total_value > 0 ? (total_gain_loss / total_value) * 100 : 0 %>
+          <h3 class="fw-bold <%= total_return >= 0 ? 'text-success' : 'text-danger' %>">
+            <%= number_with_precision(total_return, precision: 2) %>%
+          </h3>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Portfolio Table -->
-  <div class="card shadow-sm">
+  <div class="card bg-dark text-white shadow-sm">
     <div class="card-body">
-      <table class="table table-hover align-middle">
-        <thead class="table-dark">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
           <tr>
             <th>Symbol</th>
             <th>Shares Owned</th>
-            <th>Live Price</th>
+            <th>Current Price</th>
             <th>Price Change</th>
             <th>% Change</th>
             <th>Market Value</th>
@@ -32,26 +69,24 @@
           </tr>
         </thead>
         <tbody>
-          <% total_value = 0 %>
           <% @portfolios.each do |p| %>
             <% next unless p.stock %>
             <% live_price = p.stock.current_price.to_f %>
             <% market_value = live_price * p.quantity.to_f %>
-            <% total_value += market_value %>
 
             <tr>
               <td class="fw-bold"><%= p.stock.symbol %></td>
               <td><%= p.quantity %></td>
-              <td class="text-success"><%= number_to_currency(live_price) %></td>
+              <td class="text-info"><%= number_to_currency(live_price) %></td>
 
               <!-- Price change -->
-              <td style="color: <%= p.stock.price_change.to_f >= 0 ? 'green' : 'red' %>;">
+              <td style="color: <%= p.stock.price_change.to_f >= 0 ? 'lime' : 'red' %>;">
                 <%= p.stock.price_change.to_f >= 0 ? '▲ +' : '▼ ' %>
                 <%= number_with_precision(p.stock.price_change, precision: 2) %>
               </td>
 
               <!-- Percent change -->
-              <td style="color: <%= p.stock.percent_change.to_f >= 0 ? 'green' : 'red' %>;">
+              <td style="color: <%= p.stock.percent_change.to_f >= 0 ? 'lime' : 'red' %>;">
                 <%= p.stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
                 <%= number_with_precision(p.stock.percent_change, precision: 2) %>%
               </td>
@@ -59,20 +94,16 @@
               <td class="fw-semibold"><%= number_to_currency(market_value) %></td>
 
               <!-- Last updated -->
-              <td><%= p.stock.last_updated_at.strftime('%H:%M:%S') %></td>
+              <td><%= p.stock.last_updated_at.in_time_zone('Asia/Manila').strftime('%H:%M:%S') %></td>
 
               <!-- Market status -->
-              <td style="color: <%= p.stock.market_open ? 'green' : 'gray' %>;">
+              <td style="color: <%= p.stock.market_open ? 'lime' : 'gray' %>;">
                 <%= p.stock.market_open ? 'Open' : 'Closed' %>
               </td>
             </tr>
           <% end %>
         </tbody>
-        <tfoot class="table-light">
-          <tr>
-            <th colspan="5" class="text-end">Total Portfolio Value:</th>
-            <th colspan="3" class="fw-bold"><%= number_to_currency(total_value) %></th>
-          </tr>
+        <tfoot class="table-secondary text-dark">
         </tfoot>
       </table>
     </div>
