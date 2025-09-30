@@ -67,6 +67,7 @@
             <th>Market Value</th>
             <th>Last Updated</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -100,6 +101,12 @@
               <!-- Market status -->
               <td style="color: <%= p.stock.market_open ? 'lime' : 'gray' %>;">
                 <%= p.stock.market_open ? 'Open' : 'Closed' %>
+              </td>
+
+              <!-- Action buttons -->
+              <td>
+                <%= button_to "Sell", new_trade_path(stock_id: p.stock.id, action_type: 'sell', portfolio_id: p.id),
+                    method: :get, class: "btn btn-sm btn-outline-warning" %>
               </td>
             </tr>
           <% end %>

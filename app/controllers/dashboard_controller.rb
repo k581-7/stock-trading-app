@@ -23,7 +23,7 @@ class DashboardController < ApplicationController
     @trade_logs   = current_user.trade_logs.order(created_at: :desc)
 
     # Market Overview
-    @stocks = Stock.order(:symbol).limit(10)
+    @stocks = Stock.order(:symbol).limit(12)
 
     @top_gainers = Stock.where("percent_change > 0").order(percent_change: :desc).limit(3)
     @top_losers  = Stock.where("percent_change < 0").order(percent_change: :asc).limit(3)
