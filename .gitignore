@@ -35,3 +35,6 @@
 
 # Ignore rails helper
 # /spec/rails_helper.rb
+
+# Ignore database.yml
+/config/database.yml
