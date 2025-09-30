@@ -1,18 +1,11 @@
-<meta http-equiv="refresh" content="15">
+<%# <meta http-equiv="refresh" content="15"> %>
 
 <div class="container mt-4">
 
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-  <h2 class="fw-semibold text-dark">📊 Current Holdings (<%= @portfolios.count %>)</h2>
-  <p class="text-dark medium">Stocks you own right now with real-time market values</p>
-    </div>
-    <div>
-      <%= button_to "Apply to be a Broker", apply_broker_user_path(current_user), 
-          method: :patch, class: "btn btn-outline-success me-2" %>
-      <%= link_to "Trade", new_trade_path, class: "btn btn-primary me-2" %>
-    </div>
+    <h2 class="fw-semibold text-dark"><i class="bi bi-eye"></i> My Portfolio</h2>
+    <%= button_to "Refresh Stock Prices", update_prices_path, method: :post, class: "btn btn-primary" %>
   </div>
 
   <!-- Summary Cards -->
@@ -20,7 +13,7 @@
     <div class="col-md-4">
       <div class="card bg-dark text-white shadow-sm">
         <div class="card-body">
-          <h6 class="text-white">Total Portfolio Value</h6>
+          <h6 class="text-white"><i class="bi bi-currency-dollar"></i> Total Portfolio Value</h6>
           <% total_value = @portfolios.sum { |p| p.stock&.current_price.to_f * p.quantity.to_f } %>
           <h3 class="fw-bold text-info"><%= number_to_currency(total_value) %></h3>
         </div>
@@ -30,7 +23,7 @@
     <div class="col-md-4">
       <div class="card bg-dark text-white shadow-sm">
         <div class="card-body">
-          <h6 class="text-white">Total Gain/Loss</h6>
+          <h6 class="text-white"><i class="bi bi-graph-up-arrow"></i> Total Gain/Loss</h6>
           <% total_gain_loss = @portfolios.sum { |p| (p.stock&.price_change.to_f) * p.quantity.to_f } %>
           <h3 class="fw-bold <%= total_gain_loss >= 0 ? 'text-success' : 'text-danger' %>">
             <%= number_to_currency(total_gain_loss) %>
@@ -42,10 +35,10 @@
     <div class="col-md-4">
       <div class="card bg-dark text-white shadow-sm">
         <div class="card-body">
-          <h6 class="text-white">Total Return</h6>
+          <h6 class="text-white"><i class="bi bi-person-badge"></i> Total Return</h6>
           <% total_return = total_value > 0 ? (total_gain_loss / total_value) * 100 : 0 %>
           <h3 class="fw-bold <%= total_return >= 0 ? 'text-success' : 'text-danger' %>">
-            <%= number_with_precision(total_return, precision: 2) %>%
+            <%= number_with_precision(total_return, precision: 2) %>%>
           </h3>
         </div>
       </div>
@@ -57,6 +50,14 @@
     <div class="card-body">
       <table class="table table-dark table-hover align-middle mb-0">
         <thead>
+          <tr>
+            <th colspan="4" class="text-start">
+              <span class="fw-semibold text-white"><i class="bi bi-bar-chart-fill"></i> Current Holdings (<%= @portfolios.count %>)</span>
+            </th>
+            <th colspan="4" class="text-end">
+              <%= link_to "Trade", new_trade_path, class: "btn btn-outline-light btn-sm" %>
+            </th>
+          </tr>
           <tr>
             <th>Symbol</th>
             <th>Shares Owned</th>
@@ -88,7 +89,7 @@
               <!-- Percent change -->
               <td style="color: <%= p.stock.percent_change.to_f >= 0 ? 'lime' : 'red' %>;">
                 <%= p.stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
-                <%= number_with_precision(p.stock.percent_change, precision: 2) %>%
+                <%= number_with_precision(p.stock.percent_change, precision: 2) %>%>
               </td>
 
               <td class="fw-semibold"><%= number_to_currency(market_value) %></td>
@@ -103,9 +104,20 @@
             </tr>
           <% end %>
         </tbody>
-        <tfoot class="table-secondary text-dark">
-        </tfoot>
       </table>
     </div>
   </div>
+
+  <!-- Broker Button -->
+  <div class="text-end mt-3">
+    <%= button_to "Apply to be a Broker", apply_broker_user_path(current_user),
+        method: :patch, class: "btn btn-outline-success" %>
+  </div>
+
+  <% if notice %>
+    <div class="alert alert-success mt-3">
+      <%= notice %>
+    </div>
+  <% end %>
+
 </div>

@@ -12,4 +12,9 @@ class StocksController < ApplicationController
     data = finnhub.quote("AAPL")
     render json: data
   end
+
+  def update_prices
+  UpdateStockPricesJob.perform_now
+  redirect_to portfolios_path, notice: "Stock prices updated successfully."
+  end
 end
