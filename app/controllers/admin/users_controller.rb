@@ -7,6 +7,7 @@ class Admin::UsersController < ApplicationController
     @allusers = User.all
     @users = User.where(approved: false, role: :trader)
     @pending_brokers = User.where(broker_status: :broker_pending, role: :trader)
+    @approved_brokers = User.where(broker_status: :broker_approved)
   end
 
   def new
@@ -75,7 +76,7 @@ class Admin::UsersController < ApplicationController
 
   def approve_broker
     if @user.trader? && @user.broker_pending?
-      @user.update!(broker_status: :broker_approved, broker_approval_date: Time.current)
+      @user.update!(role: :broker, broker_status: :broker_approved, broker_approval_date: Time.current)
       redirect_to admin_users_path, notice: "#{@user.username} approved as broker and email sent!"
     else
       redirect_to admin_users_path, alert: "Cannot approve broker for this user."
