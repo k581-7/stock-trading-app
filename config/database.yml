@@ -5,12 +5,24 @@ default: &default
   username: <%= ENV["POSTGRES_USERNAME"] %>
   password: <%= ENV["POSTGRES_PASSWORD"] %>
   host: localhost
+
 development:
-  <<: *default
-  database: stock_trading_app
+  primary: &primary_development
+    <<: *default
+    database: stock_trading_app_development
+  queue:
+    <<: *primary_development
+    database: stock_trading_app_development_queue
+    migrations_paths: db/queue_migrate
+  
 test:
-  <<: *default
-  database: stock_trading_app_test
+  primary: &primary_test
+    <<: *default
+    database: stock_trading_app_test
+  queue:
+    <<: *primary_test
+    database: stock_trading_app_test_queue
+    migrations_paths: db/queue_migrate
   
 production:
   <<: *default
