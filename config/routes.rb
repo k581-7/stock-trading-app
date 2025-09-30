@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   end
 
   get "test_quote", to: "stocks#test_quote"
+  post "stocks/update_prices", to: "stocks#update_prices", as: :update_prices
 
 
   # Health check
