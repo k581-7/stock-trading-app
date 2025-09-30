@@ -5,7 +5,7 @@ class Admin::UsersController < ApplicationController
 
   def index
     @allusers = User.all
-    @users = User.where(approved: false)
+    @users = User.where(approved: false, role: :trader)
     @pending_brokers = User.where(broker_status: :broker_pending, role: :trader)
   end
 

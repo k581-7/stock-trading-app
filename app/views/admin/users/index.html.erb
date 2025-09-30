@@ -11,7 +11,7 @@
 <%= @pending_brokers.count %>
 
 <h2> All Traders Overview </h2>
-<%= @allusers.count %>
+<%= @allusers.where(role: ["trader", "broker"]).count %>
 
 
 
