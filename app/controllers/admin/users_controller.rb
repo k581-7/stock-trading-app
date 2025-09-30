@@ -45,6 +45,14 @@ class Admin::UsersController < ApplicationController
     redirect_to admin_users_path, notice: "User deleted."
   end
 
+  def all_users
+    @allusers = User.all
+  end
+  def pending_approvals
+    @users = User.where(approved: false, role: :trader)
+    @pending_brokers = User.where(broker_status: :broker_pending, role: :trader)
+  end
+
   def approve
     if @user.trader? && !@user.approved?
       @user.update!(approved: true, approval_date: Time.current)

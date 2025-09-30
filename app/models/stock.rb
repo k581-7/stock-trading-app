@@ -10,7 +10,7 @@ class Stock < ApplicationRecord
     selling_price - buying_price
   end
 
-    def last_updated?
+  def last_updated?
     last_updated_at.present?
   end
 
