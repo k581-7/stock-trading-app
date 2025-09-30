@@ -8,7 +8,7 @@ class Wallet < ApplicationRecord
 def trading_volume
   trade_logs.where(transaction_type: ["buy", "sell"]).sum(:amount)
 end
-  
+
   def can_withdraw?(amount)
     balance >= amount
   end

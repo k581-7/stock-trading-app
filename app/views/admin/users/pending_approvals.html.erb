@@ -1,0 +1,23 @@
+<h2>Pending Trader Approvals</h2>
+
+<% @users.where(approved: false, role: "trader").each do |user| %>
+  <p>
+    <%= user.email %>
+    <%= button_to "Approve Trader",
+                  approve_admin_user_path(user),
+                  method: :patch
+                  %>
+  </p>
+<% end %>
+
+<h2>Pending Broker Approvals</h2>
+
+<% @pending_brokers.where(broker_status: :broker_pending).each do |user| %>
+  <% if user.trader? && user.broker_pending? %>
+    <%= button_to "Approve Broker for #{user.email}",
+        approve_broker_admin_user_path(user),
+        method: :patch,
+        data: { confirm: "Approve broker for #{user.email} and confirm account?" },
+        class: "btn btn-success" %>
+  <% end %>
+<% end %>
