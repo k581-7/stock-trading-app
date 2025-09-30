@@ -78,8 +78,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_29_172847) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.decimal "balance", precision: 15, scale: 2, default: "0.0", null: false
-    t.string "currency", default: "USD", null: false
+    t.decimal "balance", null: false
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 

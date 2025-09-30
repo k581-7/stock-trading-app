@@ -4,41 +4,14 @@
 
 <h2>Pending Trader Approvals</h2>
 
-<% @users.where(approved: false, role: "trader").each do |user| %>
-  <p>
-    <%= user.email %>
-    <%= button_to "Approve Trader",
-                  approve_admin_user_path(user),
-                  method: :patch
-                  %>
-  </p>
-<% end %>
+<%= @users.count %>
 
 <h2>Pending Broker Approvals</h2>
 
-<% @pending_brokers.where(broker_status: :broker_pending).each do |user| %>
-  <% if user.trader? && user.broker_pending? %>
-    <%= button_to "Approve Broker for #{user.email}",
-        approve_broker_admin_user_path(user),
-        method: :patch,
-        data: { confirm: "Approve broker for #{user.email} and confirm account?" },
-        class: "btn btn-success" %>
-  <% end %>
-<% end %>
+<%= @pending_brokers.count %>
 
 <h2> All Traders Overview </h2>
-<% @allusers.where(role: "trader").each do |user| %>
-  <p>
-    <strong><%= user.email %></strong> - 
-    Username: <%= user.username %> -
-    Approved: <%= user.approved? ? "Yes" : "No" %> - 
-    Approval Date: <%= user.approval_date %> -
-    Broker Status: <%= user.broker_status.humanize %>
-    <%= link_to "Show", admin_user_path(user) %>
-    <%= link_to "Edit", edit_admin_user_path(user) %>
-    <%= button_to "Delete", delete_admin_user_path(user), method: :delete %>
-  </p>
-<% end %>
+<%= @allusers.where(role: ["trader", "broker"]).count %>
 
 
 

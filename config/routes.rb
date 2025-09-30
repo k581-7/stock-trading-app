@@ -37,6 +37,12 @@ Rails.application.routes.draw do
   # --- Admin routes ---
   namespace :admin do
     resources :users do
+      collection do
+        get :index
+        get :pending_approvals
+        get :all_users
+      end
+
       member do
         patch :approve
         patch :revoke
@@ -48,6 +54,7 @@ Rails.application.routes.draw do
   end
 
   get "test_quote", to: "stocks#test_quote"
+  post "stocks/update_prices", to: "stocks#update_prices", as: :update_prices
 
 
   # Health check
