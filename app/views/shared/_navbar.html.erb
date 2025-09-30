@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-lg" style="background-color: #1c1f26;">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold text-light" href="/">PNM</a>
+<nav class="navbar navbar-expand-lg" style="background-color: #1F2937;">
+  <div class="container d-flex justify-content-center">
+  <%= image_tag 'pnm_transparent.png', alt: 'PNM Trading Logo', height: 50, class: 'me-2' %>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -10,27 +10,27 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <%= link_to dashboard_path, class: 'nav-link text-light' do %>
-            <i class="bi bi-speedometer2 me-1 text-info"></i> Dashboard
+            <i class="bi bi-speedometer2 me-1" style="color: white;"></i> Dashboard
           <% end %>
         </li>
         <li class="nav-item">
           <%= link_to new_trade_path, class: 'nav-link text-light' do %>
-            <i class="bi bi-graph-up-arrow me-1 text-info"></i> Trading
+            <i class="bi bi-graph-up-arrow me-1 style="color: white;"></i> Trading
           <% end %>
         </li>
         <li class="nav-item">
           <%= link_to portfolios_path, class: 'nav-link text-light' do %>
-            <i class="bi bi-pie-chart me-1 text-info"></i> Portfolio
+            <i class="bi bi-pie-chart me-1 style="color: white;"></i> Portfolio
           <% end %>
         </li>
         <li class="nav-item">
           <%= link_to wallet_path, class: 'nav-link text-light' do %>
-            <i class="bi bi-wallet2 me-1 text-info"></i> Wallet
+            <i class="bi bi-wallet2 me-1 style="color: white;"></i> Wallet
           <% end %>
         </li>
         <li class="nav-item">
           <%= link_to trade_logs_path, class: 'nav-link text-light' do %>
-            <i class="bi bi-journal-text me-1 text-info"></i> Transactions
+            <i class="bi bi-journal-text me-1 style="color: white;"></i> Transactions
           <% end %>
         </li>
       </ul>

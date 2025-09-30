@@ -1,104 +1,133 @@
-<div class="container mt-4">
-<!-- 📈📉 Gainers & Losers Section -->
-<div class="card mb-4 shadow-sm">
-  <div class="card-body">
-    <div class="row g-4">
-      <!-- Top Gainers -->
-      <div class="col-md-6">
-        <div class="card border-success h-100">
-          <div class="card-header bg-success text-white">
-            <h6 class="mb-0">Top Gainers Today</h6>
-          </div>
-          <div class="card-body">
-            <% @top_gainers.each do |stock| %>
-              <div class="d-flex justify-content-between mb-2">
-                <strong><%= stock.symbol %></strong>
-                <span><%= number_to_currency(stock.current_price) %></span>
-                <span class="text-success">+<%= stock.percent_change %>%</span>
-              </div>
-            <% end %>
-          </div>
+<!-- app/views/trades/index.html.erb -->
+<div class="container py-4">
+  <div class="container-fluid trader-dashboard-bg">
+
+  <!-- Header -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+    <div>
+      <h3 class="mb-0 fw-bold text-light">📈 Stock Trading</h3>
+      <small class="text-secondary">Buy stocks to build your portfolio</small>
+    </div>
+    <div class="d-flex align-items-center gap-2 mt-3 mt-sm-0">
+      <span class="text-secondary">Market Status:</span>
+      <% market_open = @stocks.any?(&:market_open) %>
+      <span class="<%= market_open ? 'text-success' : 'text-muted' %> fw-semibold">
+        <%= market_open ? 'Open' : 'Closed' %>
+      </span>
+      <span class="status-dot <%= market_open ? 'bg-success' : 'bg-secondary' %>"></span>
+    </div>
+  </div>
+
+  <!-- Gainers / Losers -->
+  <div class="row g-4 mb-4">
+    <!-- Top Gainers -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
+        <div class="card-header bg-transparent border-0 text-light fw-semibold">
+          <i class="bi bi-graph-up-arrow text-success me-2"></i> Top Gainers Today
+        </div>
+        <div class="card-body">
+          <% @top_gainers.each do |s| %>
+            <div class="d-flex justify-content-between align-items-center py-2 px-2 rounded mb-2" style="background-color: #374151;">
+              <div class="fw-semibold text-white"><%= s.symbol %></div>
+              <div class="text-secondary"><%= number_to_currency(s.current_price) %></div>
+              <div class="text-success fw-semibold">+<%= number_with_precision(s.percent_change, precision: 2) %>%</div>
+            </div>
+          <% end %>
         </div>
       </div>
+    </div>
 
-      <!-- Top Losers -->
-      <div class="col-md-6">
-        <div class="card border-danger h-100">
-          <div class="card-header bg-danger text-white">
-            <h6 class="mb-0">Top Losers Today</h6>
-          </div>
-          <div class="card-body">
-            <% @top_losers.each do |stock| %>
-              <div class="d-flex justify-content-between mb-2">
-                <strong><%= stock.symbol %></strong>
-                <span><%= number_to_currency(stock.current_price) %></span>
-                <span class="text-danger"><%= stock.percent_change %>%</span>
-              </div>
-            <% end %>
-          </div>
+    <!-- Top Losers -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
+        <div class="card-header bg-transparent border-0 text-light fw-semibold">
+          <i class="bi bi-graph-down-arrow text-danger me-2"></i> Top Losers Today
+        </div>
+        <div class="card-body">
+          <% @top_losers.each do |s| %>
+            <div class="d-flex justify-content-between align-items-center py-2 px-2 rounded mb-2" style="background-color: #374151;">
+              <div class="fw-semibold text-white"><%= s.symbol %></div>
+              <div class="text-secondary"><%= number_to_currency(s.current_price) %></div>
+              <div class="text-danger fw-semibold"><%= number_with_precision(s.percent_change, precision: 2) %>%</div>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- 📊 Available Stocks Section -->
-<div class="card mb-4 shadow-sm">
-  <div class="card-header bg-dark text-white">
-    <h6 class="mb-0">Available Stocks</h6>
-  </div>
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-dark table-hover align-middle">
-        <thead>
-          <tr>
-            <th>Symbol</th>
-            <th>Company</th>
-            <th>Price</th>
-            <th>Current Price</th>
-            <th>Price Change</th>
-            <th>% Change</th>
-            <th>Last Updated</th>
-            <th>Status</th>
-            <th class="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @stocks.each do |stock| %>
-            <% live_price = stock.current_price.to_f %>
-            <tr>
-              <td><strong><%= stock.symbol %></strong></td>
-              <td><%= stock.name %></td>
-              <td><%= number_to_currency(stock.current_price) %></td>
-              <td class="text-info"><%= number_to_currency(live_price) %></td>
-              <td style="color: <%= stock.price_change.to_f >= 0 ? 'lime' : 'red' %>;">
-                <%= stock.price_change.to_f >= 0 ? '▲ +' : '▼ ' %>
-                <%= number_with_precision(stock.price_change, precision: 2) %>
-              </td>
-              <td style="color: <%= stock.percent_change.to_f >= 0 ? 'lime' : 'red' %>;">
-                <%= stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
-                <%= number_with_precision(stock.percent_change, precision: 2) %>%>
-              </td>
-              <td><%= stock.last_updated_at.in_time_zone('Asia/Manila').strftime('%H:%M:%S') %></td>
-              <td style="color: <%= stock.market_open ? 'lime' : 'gray' %>;">
-                <%= stock.market_open ? 'Open' : 'Closed' %>
-              </td>
-              <td class="text-center">
-                <%= form_with url: buy_trade_path, method: :post, class: "d-inline", local: true do %>
-                  <%= hidden_field_tag :stock_id, stock.id %>
-                  <%= hidden_field_tag :shares, 1 %>
-                  <%= submit_tag "Buy", class: "btn btn-sm btn-success me-1" %>
-                <% end %>
-                <%= form_with url: sell_trade_path, method: :post, class: "d-inline", local: true do %>
-                  <%= hidden_field_tag :stock_id, stock.id %>
-                  <%= hidden_field_tag :shares, 1 %>
-                  <%= submit_tag "Sell", class: "btn btn-sm btn-danger" %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+  <!-- Available Stocks -->
+  <div class="card border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
+    <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-0 text-light fw-semibold">
+      <span><i class="bi bi-currency-dollar me-2 text-info"></i> Available Stocks</span>
+      <small class="text-secondary"><%= @stocks.size %> stocks available</small>
+    </div>
+
+    <div class="list-group list-group-flush">
+      <% @stocks.each do |stock| %>
+        <% price = stock.current_price.to_f %>
+        <% change = stock.price_change.to_f %>
+        <% pct = stock.percent_change.to_f %>
+        <% up = change >= 0 %>
+        <% arrow = up ? 'bi-graph-up' : 'bi-graph-down' %>
+        <% change_class = up ? 'text-success' : 'text-danger' %>
+        <% market_class = stock.market_open ? 'text-success' : 'text-secondary' %>
+
+        <div class="list-group-item bg-dark text-light border-secondary-subtle py-3">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+            <!-- Symbol + Name -->
+            <div class="d-flex align-items-center gap-3">
+              <div class="sym-pill"><%= stock.symbol %></div>
+              <div class="d-flex flex-column">
+                <div class="fw-semibold"><%= stock.name %></div>
+                <small class="text-secondary">Last updated: <%= stock.last_updated_at.in_time_zone('Asia/Manila').strftime('%H:%M:%S') %></small>
+              </div>
+            </div>
+
+            <!-- Price Info -->
+            <div class="d-flex align-items-center gap-4">
+              <div class="text-end">
+                <small class="text-secondary d-block">Price</small>
+                <div class="fs-6"><%= number_to_currency(price) %></div>
+              </div>
+              <div class="text-end">
+                <small class="text-secondary d-block">Change</small>
+                <div class="<%= change_class %> fw-semibold">
+                  <i class="bi <%= arrow %> me-1"></i>
+                  <%= up ? '+' : '' %><%= number_with_precision(change, precision: 2) %>
+                </div>
+              </div>
+              <div class="text-end">
+                <small class="text-secondary d-block">% Change</small>
+                <div class="<%= change_class %> fw-semibold">
+                  <%= up ? '+' : '' %><%= number_with_precision(pct, precision: 2) %>%
+                </div>
+              </div>
+              <div class="text-end">
+                <small class="text-secondary d-block">Status</small>
+                <div class="<%= market_class %> d-flex align-items-center gap-2">
+                  <span class="status-dot <%= stock.market_open ? 'bg-success' : 'bg-secondary' %>"></span>
+                  <%= stock.market_open ? 'Open' : 'Closed' %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Buy Button Only -->
+            <div>
+              <%= form_with url: buy_trade_path, method: :post, class: "d-inline", local: true do %>
+                <%= hidden_field_tag :stock_id, stock.id %>
+                <%= hidden_field_tag :shares, 1 %>
+                <button class="btn btn-success btn-sm">
+                  <i class="bi bi-bag-plus me-1"></i> Buy
+                </button>
+              <% end %>
+            </div>
+
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

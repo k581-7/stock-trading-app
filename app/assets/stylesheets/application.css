@@ -8,15 +8,20 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
-/* .card-header {
-  font-weight: bold;
-  background-color: #2c303a !important;
-/* } */
+/* .trader-dashboard-bg {
+  background-color: #1F2937;
+} */
 
-/* .card-body h6 {
-  color: #adb5bd;
+.trader-dashboard-bg {
+  background-color: #111827;
+  min-height: 100vh;
+  padding-top: 0.4rem;
+  color: #ffffff;
 }
 
-.card-body h2 {
-  color: #00bcd4;
-} */ 
+/* .card-dark-slate {
+  background-color: #1F2937;
+  border-radius: 0.5rem;
+  border: 1px solid #2d3748;
+
+} */

@@ -1,22 +1,26 @@
-<div class="container trader-dashboard-bg">
+<div class="container-fluid trader-dashboard-bg">
 
-  <h1 class="mb-4">Trader Dashboard</h1>
-
-  <div class="row g-4 text-center">
-    <!-- Available Balance -->
-    <div class="col-md-4">
-      <div class="card bg-dark text-light shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="text-secondary">Available Balance</h6>
-          <h2 class="fw-bold text-info"><%= number_to_currency(@wallet.balance) %></h2>
-          <p class="text-secondary mb-0">Ready to trade</p>
+<div class="container trader-dashboard-bg d-flex flex-column align-items-center">
+<div class="dashboard-content w-100" style="max-width: 1300px;">
+ <h3 class="mb-0 fw-bold text-light">Trader Dashboard</h3>
+ <small class="text-secondary">Welcome back! Here's your wallet and market overview</small>
+<br>
+<br>
+   <!-- Available Balance-->
+    <div class="row g-4 text-center">
+      <div class="col-md-4">
+        <div class="card text-light border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
+          <div class="card-body">
+            <h6 class="text-secondary">Available Balance</h6>
+            <h2 class="fw-bold text-info"><%= number_to_currency(@wallet.balance) %></h2>
+            <p class="text-secondary mb-0">Ready to trade</p>
+          </div>
         </div>
       </div>
-    </div>
 
     <!-- Total Deposits -->
     <div class="col-md-4">
-      <div class="card bg-dark text-light shadow-sm border-0">
+              <div class="card text-light border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
         <div class="card-body">
           <h6 class="text-secondary">Total Deposits</h6>
           <h2 class="fw-bold text-primary"><%= number_to_currency(@wallet_logs.where(transaction_type: 'deposit').sum(:amount)) %></h2>
@@ -27,7 +31,7 @@
 
     <!-- Trading Volume -->
     <div class="col-md-4">
-      <div class="card bg-dark text-light shadow-sm border-0">
+              <div class="card text-light border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
         <div class="card-body">
           <h6 class="text-secondary">Trading Volume</h6>
           <h2 class="fw-bold text-info"><%= number_to_currency(@trade_history.sum(:amount)) %></h2>
@@ -36,66 +40,56 @@
       </div>
     </div>
   </div>
-<br>
 
-<!-- Market Overview -->
-<div class="card mb-4 bg-dark text-light border-0 shadow-sm">
-  <div class="card-header bg-secondary text-white">Market Overview</div>
-  <div class="card-body">
-    <div class="row row-cols-2 row-cols-md-3 g-3">
-      <% @stocks.each do |stock| %>
-        <div class="col">
-          <div class="border rounded p-3 text-center bg-dark text-light shadow-sm">
-            <h6 class="mb-1 fw-bold text-info"><%= stock.symbol %></h6>
-            <p class="mb-0 text-light"><%= stock.name %></p>
-            <p class="mb-0 fw-bold">
-              <%= number_to_currency(stock.current_price) %>
-              <span class="<%= stock.price_change.to_f >= 0 ? 'text-success' : 'text-danger' %>">
-                (<%= stock.price_change.to_f >= 0 ? '+' : '' %><%= number_to_percentage(stock.price_change, precision: 2) %>)
-              </span>
-            </p>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-  <!-- Quick Trading Actions -->
-  <div class="card mb-4 shadow-sm bg-dark text-light border-0">
-    <div class="card-header bg-secondary text-white text-center">
-      <h5 class="mb-0">Quick Trading Actions</h5>
-    </div>
-    <div class="card-body">
-      <div class="row g-3 text-center">
-        <!-- Buy Stocks -->
-        <div class="col-md-3 col-6">
-          <a href="<%= new_trade_path %>" class="btn btn-success w-100 py-3">
-            <i class="bi bi-arrow-up-right-circle me-2"></i> Buy Stocks
-          </a>
-        </div>
-
-        <!-- Sell Stocks -->
-        <div class="col-md-3 col-6">
-          <a href="<%= new_trade_path %>" class="btn btn-danger w-100 py-3">
-            <i class="bi bi-arrow-down-right-circle me-2"></i> Sell Stocks
-          </a>
-        </div>
-
-        <!-- My Portfolio -->
-        <div class="col-md-3 col-6">
-          <a href="<%= portfolios_path %>" class="btn btn-info w-100 py-3 text-white">
-            <i class="bi bi-graph-up-arrow me-2"></i> My Portfolio
-          </a>
-        </div>
-
-        <!-- My Wallet -->
-        <div class="col-md-3 col-6">
-          <a href="<%= wallet_path %>" class="btn btn-warning w-100 py-3 text-dark">
-            <i class="bi bi-wallet2 me-2"></i> My Wallet
-          </a>
+ <!-- Market Overview -->
+    <div class="card mt-5 border-0 shadow-sm text-light" style="background-color: #1F2937; border-radius: 0.5rem;">
+      <div class="card-header text-white text-left fw-bold" style="background-color: #1F2937; border: none;">Market Overview</div>
+      <div class="card-body">
+        <div class="row row-cols-2 row-cols-md-4 g-3">
+          <% @stocks.each do |stock| %>
+            <div class="col">
+              <div class="card text-light border-0 shadow-sm" style="background-color: #374151; border-radius: 0.5rem;">
+                <div class="card-body text-center">
+                  <h6 class="fw-bold text-white mb-1"><%= stock.symbol %></h6>
+                  <p class="text-secondary mb-1"><%= stock.name %></p>
+                  <p class="fw-bold mb-0">
+                    <%= number_to_currency(stock.current_price) %>
+                    <span class="<%= stock.price_change.to_f >= 0 ? 'text-success' : 'text-danger' %>">
+                      (<%= stock.price_change.to_f >= 0 ? '+' : '' %><%= number_to_percentage(stock.price_change, precision: 2) %>)
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
+    </div>
+
+    <br>
+<!-- Quick Trading Actions -->
+<div class="card mb-4 shadow-sm text-light border-0" style="background-color: #1F2937; border-radius: 0.5rem;">
+  <div class="card-header text-white fw-bold" style="background-color: #1F2937; border: none;">
+    Quick Trading Actions
+  </div>
+  <div class="card-body">
+    <div class="d-flex flex-column gap-3">
+
+      <!-- Trade Now -->
+      <a href="<%= new_trade_path %>" class="btn btn-success w-100 py-3 fw-bold shadow">
+        <i class="bi bi-arrow-up-right-circle me-2"></i> Trade Now
+      </a>
+
+      <!-- Manage Assets -->
+      <a href="<%= portfolios_path %>" class="btn btn-info w-100 py-3 text-white fw-bold shadow">
+        <i class="bi bi-graph-up-arrow me-2"></i> Manage Assets
+      </a>
+
+      <!-- My Wallet -->
+      <a href="<%= wallet_path %>" class="btn btn-warning w-100 py-3 text-dark fw-bold shadow">
+        <i class="bi bi-wallet2 me-2"></i> My Wallet
+      </a>
+
     </div>
   </div>
 </div>

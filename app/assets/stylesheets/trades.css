@@ -1,0 +1,28 @@
+  .text-as-muted{ color:#9AA4B2 !important; }
+
+  .bg-as-tile{
+    background:#2A3646; /* matches the slate-ish tile in your screenshot */
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:.6rem;
+  }
+
+  .as-symbol{
+    background:#1F2937;
+    border:1px solid rgba(255,255,255,0.08);
+    padding:.38rem .65rem;
+    border-radius:.5rem;
+    font-weight:700;
+    letter-spacing:.4px;
+    min-width:3.4rem;
+    text-align:center;
+  }
+
+  .status-dot{
+    width:10px; height:10px; border-radius:50%; display:inline-block;
+  }
+
+  /* tighten list layout on very small screens */
+  @media (max-width: 576px){
+    .bg-as-tile{ padding: .85rem 1rem !important; }
+  }
+
