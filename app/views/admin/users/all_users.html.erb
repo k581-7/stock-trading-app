@@ -1,6 +1,6 @@
-<h2> All Traders Overview </h2>
+<h2> All Users Overview - <%= @allusers.where(role: ["trader", "broker"]).count %> </h2>
 
-<% @allusers.where(role: "trader").each do |user| %>
+<% @allusers.where(role: ["trader", "broker"]).each do |user| %>
   <p>
     <strong><%= user.email %></strong> - 
     Username: <%= user.username %> -
