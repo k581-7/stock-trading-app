@@ -46,6 +46,13 @@ class PortfoliosController < ApplicationController
     redirect_to portfolios_path, notice: "Portfolio deleted successfully."
   end
 
+  def update_prices
+    UpdateStockPricesJob.perform_later
+    redirect_to portfolios_path, notice: "Stock prices are updating..."
+  end
+
+
+
   private
 
   def set_portfolio

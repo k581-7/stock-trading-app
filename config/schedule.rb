@@ -5,7 +5,7 @@
 
 # Example:
 #
-# set :output, "/path/to/my/cron_log.log"
+set :environment, "development"
 
 every 1.minute do
   runner "UpdateStockPricesJob.perform_later"

@@ -1,0 +1,15 @@
+<tr id="stock_row_<%= stock.id %>">
+  <td><%= stock.symbol %></td>
+  <td><%= stock.name %></td>
+  <td><%= number_to_currency(stock.current_price) %></td>
+  <td style="color: <%= stock.price_change.to_f >= 0 ? 'green' : 'red' %>;">
+    <%= stock.price_change.to_f >= 0 ? '+' : '' %><%= number_with_precision(stock.price_change, precision: 2) %>
+  </td>
+  <td style="color: <%= stock.percent_change.to_f >= 0 ? 'green' : 'red' %>;">
+    <%= stock.percent_change.to_f >= 0 ? '+' : '' %><%= number_with_precision(stock.percent_change, precision: 2) %>%
+  </td>
+  <td><%= stock.last_updated_at.strftime('%H:%M:%S') %></td>
+  <td style="color: <%= stock.market_open ? 'green' : 'gray' %>;">
+    <%= stock.market_open ? 'Open' : 'Closed' %>
+  </td>
+</tr>
