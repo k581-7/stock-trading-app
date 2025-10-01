@@ -1,14 +1,90 @@
-<h2> All Users Overview - <%= @allusers.where(role: ["trader", "broker"]).count %> </h2>
+<%# app/views/admin/users/index.html.erb %>
 
-<% @allusers.where(role: ["trader", "broker"]).each do |user| %>
-  <p>
-    <strong><%= user.email %></strong> - 
-    Username: <%= user.username %> -
-    Approved: <%= user.approved? ? "Yes" : "No" %> - 
-    Approval Date: <%= user.approval_date %> -
-    Broker Status: <%= user.broker_status.humanize %>
-    <%= link_to "Show", admin_user_path(user) %>
-    <%= link_to "Edit", edit_admin_user_path(user) %>
-    <%= button_to "Delete", delete_admin_user_path(user), method: :delete %>
-  </p>
-<% end %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="fw-semibold">All Users</h4>
+  <%= link_to new_admin_user_path, class: "btn btn-primary d-flex align-items-center gap-2" do %>
+    <i class="bi bi-plus-lg"></i> Add User
+  <% end %>
+</div>
+
+<div class="table-responsive">
+  <table class="table align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>User</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Created</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @allusers.where(role: [ "trader", "broker" ]).each do |user| %>
+        <tr>
+          <!-- User / Avatar -->
+          <td>
+            <div class="d-flex align-items-center">
+              <% if user.approved? %>
+                <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center me-3" style="width:36px;height:36px;">
+                  <i class="bi bi-person-fill fs-5"></i>
+                </div>
+              <% else %>
+                <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center me-3" style="width:36px;height:36px;">
+                  <i class="bi bi-person-fill fs-5"></i>
+                </div>
+              <% end %>
+              <div>
+                <div class="fw-semibold"><%= user.username.presence || "No Name" %></div>
+                <small class="text-secondary">ID: <%= user.id %></small>
+              </div>
+            </div>
+          </td>
+
+          <!-- Email -->
+          <td><%= user.email %></td>
+
+          <!-- Role -->
+          <td><%= user.role.humanize %></td>
+
+          <!-- Created -->
+          <td><%= user.created_at.strftime("%-m/%-d/%Y") %></td>
+
+          <!-- Status -->
+          <td>
+            <% if user.approved? %>
+              <span class="badge rounded-pill bg-success-subtle text-success d-inline-flex align-items-center gap-1">
+                <span class="rounded-circle bg-success" style="width:8px;height:8px;"></span> Active
+              </span>
+            <% else %>
+              <span class="badge rounded-pill bg-warning-subtle text-warning d-inline-flex align-items-center gap-1">
+                <span class="rounded-circle bg-warning" style="width:8px;height:8px;"></span> Pending
+              </span>
+            <% end %>
+          </td>
+
+          <!-- Actions -->
+          <td class="text-end">
+            <div class="btn-group" role="group">
+              <%= link_to admin_user_path(user), class: "btn btn-sm btn-light border", title: "View" do %>
+                <i class="bi bi-eye"></i>
+              <% end %>
+
+              <%= link_to edit_admin_user_path(user), class: "btn btn-sm btn-light border", title: "Edit" do %>
+                <i class="bi bi-pencil"></i>
+              <% end %>
+
+              <%= button_to delete_admin_user_path(user),
+                    method: :delete,
+                    form: { data: { turbo_confirm: "Are you sure?" } },
+                    class: "btn btn-sm btn-light border",
+                    title: "Delete" do %>
+                <i class="bi bi-trash"></i>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

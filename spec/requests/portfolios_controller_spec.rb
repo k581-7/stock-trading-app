@@ -102,7 +102,7 @@ RSpec.describe "Portfolios", type: :request do
         delete portfolio_path(portfolio)
         expect(response).to redirect_to(portfolios_path)
         follow_redirect!
-        expect(response.body).to include("Not authorized") 
+        expect(response.body).to include("Not authorized")
       end
     end
   end

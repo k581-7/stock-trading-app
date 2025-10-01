@@ -36,6 +36,8 @@ Rails.application.routes.draw do
 
   # --- Admin routes ---
   namespace :admin do
+    resources :transactions, only: :index
+
     resources :users do
       collection do
         get :index

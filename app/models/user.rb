@@ -30,12 +30,12 @@ class User < ApplicationRecord
   end
 
   def day_profit_loss
-  trade_logs.sum do |log|
-    next 0 unless log.stock && log.stock.price_change
-    direction = log.transaction_type == 'buy' ? 1 : -1
-    log.stock.price_change.to_f * log.quantity.to_f * direction
+    trade_logs.sum do |log|
+      next 0 unless log.stock && log.stock.price_change
+      direction = log.transaction_type == "buy" ? 1 : -1
+      log.stock.price_change.to_f * log.quantity.to_f * direction
+    end
   end
-end
 
   private
 
