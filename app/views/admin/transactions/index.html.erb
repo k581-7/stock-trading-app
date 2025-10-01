@@ -84,13 +84,11 @@
           <% @transactions.each do |t| %>
             <% total = (t.quantity || 0) * (t.amount || 0) %>
             <tr>
-              <!-- Date & Time -->
               <td>
                 <div><%= t.created_at.strftime("%-m/%-d/%Y") %></div>
                 <small class="text-secondary"><%= t.created_at.strftime("%-I:%M:%S %p") %></small>
               </td>
 
-              <!-- User cell -->
               <td>
                 <div class="d-flex align-items-center">
                   <div class="rounded-circle bg-secondary-subtle text-secondary d-flex align-items-center justify-content-center me-2" style="width:28px;height:28px;">
@@ -103,10 +101,8 @@
                 </div>
               </td>
 
-              <!-- Symbol -->
               <td class="fw-semibold"><%= t.stock&.symbol || "—" %></td>
 
-              <!-- Type -->
               <td>
                 <% if t.transaction_type == "buy" %>
                   <span class="badge rounded-pill bg-success-subtle text-success d-inline-flex align-items-center gap-1">
@@ -119,7 +115,6 @@
                 <% end %>
               </td>
 
-              <!-- Numbers -->
               <td class="text-end"><%= t.quantity %></td>
               <td class="text-end"><%= number_to_currency(t.amount) %></td>
               <td class="text-end fw-semibold"><%= number_to_currency(total) %></td>

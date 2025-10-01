@@ -2,7 +2,6 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
 
   def dashboard
-    # trader/broker user-facing logic
   end
 
   def apply_broker
