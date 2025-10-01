@@ -3,7 +3,8 @@
 
     <!-- Page Header -->
     <h3 class="mb-0 fw-bold" style="color:#f9fafb;">Transactions</h3>
-    <small style="color:#9AA4B2;">Complete audit trail of all your trading actions and account activities</small>
+    <small style="color:#9AA4B2;">Complete audit trail of all your trading actions and account activities<br><br></small>
+   
 
     <!-- Section Tabs -->
     <div class="mb-3 p-3 rounded" style="background-color:#1F2937;">
@@ -12,7 +13,7 @@
           <ul class="nav gap-3" role="tablist" style="list-style:none; padding:0; margin:0;">
             <li class="nav-item" role="presentation">
               <a class="nav-link active" data-bs-toggle="tab" href="#trade" role="tab" aria-selected="true"
-                 style="display:block; text-decoration:none; min-width:240px; background:#1D4ED8; border:none;
+                 style="display:block; text-decoration:none; min-width:240px; background:#374151; border:none;
                         color:#fff; border-radius:.6rem; padding:.85rem 1rem;">
                 <div style="font-weight:600;">Trade History (<%= @trade_history.count %>)</div>
                 <div style="font-size:.85rem; color:#e5f0ff;">Your buy and sell actions</div>
@@ -20,7 +21,7 @@
             </li>
             <li class="nav-item" role="presentation">
               <a class="nav-link" data-bs-toggle="tab" href="#wallet" role="tab" aria-selected="false"
-                 style="display:block; text-decoration:none; min-width:240px; background:#1F2937; border:none;
+                 style="display:block; text-decoration:none; min-width:240px; background:#374151; border:none;
                         color:#dbe4ee; border-radius:.6rem; padding:.85rem 1rem;">
                 <div style="font-weight:600;">Wallet Activity (<%= @wallet_logs.count %>)</div>
                 <div style="font-size:.85rem; color:#9AA4B2;">Deposits and withdrawals</div>
@@ -28,7 +29,7 @@
             </li>
             <li class="nav-item" role="presentation">
               <a class="nav-link" data-bs-toggle="tab" href="#all" role="tab" aria-selected="false"
-                 style="display:block; text-decoration:none; min-width:240px; background:#1F2937; border:none;
+                 style="display:block; text-decoration:none; min-width:240px; background:#374151; border:none;
                         color:#dbe4ee; border-radius:.6rem; padding:.85rem 1rem;">
                 <div style="font-weight:600;">All Activity (<%= @trade_logs.count %>)</div>
                 <div style="font-size:.85rem; color:#9AA4B2;">Complete transaction history</div>
@@ -40,7 +41,7 @@
     </div>
 
     <!-- Trading History Container -->
-    <div class="card border-0 mb-3" style="background:#0f1626; border-radius:.6rem;">
+    <div class="card border-0 mb-3" style="background:#1F2937; border-radius:.6rem;">
       <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-0 px-4 py-3">
         <h5 class="mb-0 fw-semibold" style="color:#f9fafb;">Trading History (<%= @trade_history.count %>)</h5>
         <small style="color:#9AA4B2;">Every buy and sell action you've made</small>
