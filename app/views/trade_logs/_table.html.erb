@@ -1,39 +1,69 @@
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Type</th>
-      <th>Details</th>
-      <th>Amount</th>
-      <th>Balance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% logs.each do |log| %>
-      <tr>
-        <td><%= log.created_at.strftime("%b %d, %Y %I:%M %p") %></td>
-        <td><%= log.transaction_type.capitalize %></td>
-        <td>
-          <% if log.transaction_type.in?(%w[buy sell]) %>
-            <%= "#{log.transaction_type.capitalize} #{log.quantity} shares of #{log.stock&.symbol}" %>
-          <% elsif log.transaction_type == "deposit" %>
-            <%# Deposit via <%= log.source.presence || "bank transfer" %>
-          <% elsif log.transaction_type == "withdraw" %>
-            Withdrawal to linked account
-            <%# Withdrawal to <%= log.destination.presence || "linked account" %> 
-          <% else %>
-            —
-          <% end %>
-        </td>
-        <td>
-          <% if log.transaction_type == "deposit" || log.transaction_type == "sell" %>
-            <span class="text-success">+<%= number_to_currency(log.amount) %></span>
-          <% else %>
-            <span class="text-danger">-<%= number_to_currency(log.amount) %></span>
-          <% end %>
-        </td>
-        <td><%= number_to_currency(log.wallet&.balance || 0) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="activity-list">
+  <% logs.each do |log| %>
+    <% type = log.transaction_type %>
+    <% is_buy      = type == "buy" %>
+    <% is_sell     = type == "sell" %>
+    <% is_deposit  = type == "deposit" %>
+    <% is_withdraw = type == "withdraw" %>
+
+    <% icon_class =
+        case type
+        when "buy" then "bi bi-arrow-up-circle-fill text-success"
+        when "sell" then "bi bi-arrow-down-circle-fill text-danger"
+        when "deposit" then "bi bi-plus-circle-fill text-info"
+        when "withdraw" then "bi bi-dash-circle-fill text-warning"
+        else "bi bi-question-circle-fill text-secondary"
+        end %>
+
+    <% badge_class =
+        case type
+        when "buy" then "bg-success text-white"
+        when "sell" then "bg-danger text-white"
+        when "deposit" then "bg-info text-white"
+        when "withdraw" then "bg-warning text-dark"
+        else "bg-secondary text-white"
+        end %>
+
+    <% amount_class = log.amount >= 0 ? "text-success" : "text-danger" %>
+    <% action_label =
+        case type
+        when "buy" then "Added to portfolio"
+        when "sell" then "Removed from portfolio"
+        when "deposit" then "Deposited"
+        when "withdraw" then "Withdrawn"
+        else "Processed"
+        end %>
+
+    <div class="mb-3 p-3 rounded" style="background-color:#374151;">
+      <div class="row align-items-center">
+        <!-- Left side: icon, type, details -->
+        <div class="col-md-8 col-12">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="<%= icon_class %> fs-5"></i>
+            <strong class="text-light text-uppercase"><%= type %> <%= log.stock&.symbol || "" %></strong>
+            <span class="badge <%= badge_class %> text-uppercase px-2 py-1"><%= type %></span>
+          </div>
+          <div class="text-secondary">
+            <%= log.created_at.in_time_zone("Asia/Manila").strftime("%b %d, %Y %I:%M %p") %><br>
+            <% if is_buy || is_sell %>
+              <%= "#{log.quantity} shares @ #{number_to_currency(log.stock&.current_price || 0)} – #{is_buy ? 'Purchased' : 'Sold'} for #{number_to_currency(log.amount)}" %>
+            <% elsif is_deposit || is_withdraw %>
+              <%= "#{type.capitalize} of #{number_to_currency(log.amount)} via bank transfer" %>
+            <% else %>
+              —
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Right side: amount, action, balance -->
+        <div class="col-md-4 col-12 text-md-end mt-3 mt-md-0">
+          <div class="<%= amount_class %> fw-semibold">
+            <%= log.amount >= 0 ? '+' : '-' %><%= number_to_currency(log.amount.abs) %>
+          </div>
+          <small class="text-muted d-block"><%= "Action: #{type}" %></small>
+          <small class="text-secondary d-block">Balance: <%= number_to_currency(log.wallet&.balance || 0) %></small>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

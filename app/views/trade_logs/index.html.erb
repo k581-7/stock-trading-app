@@ -1,37 +1,64 @@
-<div class="container mt-4">
-<h1 class="mb-4">Your Activity</h1>
+<div class="container-fluid" style="background:#0b1220; min-height:100vh;">
+  <div class="container py-4" style="max-width:1200px;">
 
-<ul class="nav nav-tabs" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" data-bs-toggle="tab" href="#trade" role="tab">
-      Trade History (<%= @trade_history.count %>)
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-bs-toggle="tab" href="#wallet" role="tab">
-      Wallet Activity (<%= @wallet_logs.count %>)
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-bs-toggle="tab" href="#all" role="tab">
-      All Activity (<%= @trade_logs.count %>)
-    </a>
-  </li>
-</ul>
+    <!-- Page Header -->
+    <h3 class="mb-0 fw-bold" style="color:#f9fafb;">Transactions</h3>
+    <small style="color:#9AA4B2;">Complete audit trail of all your trading actions and account activities<br><br></small>
+   
 
-<div class="tab-content mt-3">
-  <div class="tab-pane fade show active" id="trade" role="tabpanel">
-    <h5>Your buy and sell actions</h5>
-    <%= render partial: "table", locals: { logs: @trade_history } %>
-  </div>
+    <!-- Section Tabs -->
+    <div class="mb-3 p-3 rounded" style="background-color:#1F2937;">
+      <div class="card-body p-3">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <ul class="nav gap-3" role="tablist" style="list-style:none; padding:0; margin:0;">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" data-bs-toggle="tab" href="#trade" role="tab" aria-selected="true"
+                 style="display:block; text-decoration:none; min-width:240px; background:#374151; border:none;
+                        color:#fff; border-radius:.6rem; padding:.85rem 1rem;">
+                <div style="font-weight:600;">Trade History (<%= @trade_history.count %>)</div>
+                <div style="font-size:.85rem; color:#e5f0ff;">Your buy and sell actions</div>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" href="#wallet" role="tab" aria-selected="false"
+                 style="display:block; text-decoration:none; min-width:240px; background:#374151; border:none;
+                        color:#dbe4ee; border-radius:.6rem; padding:.85rem 1rem;">
+                <div style="font-weight:600;">Wallet Activity (<%= @wallet_logs.count %>)</div>
+                <div style="font-size:.85rem; color:#9AA4B2;">Deposits and withdrawals</div>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" href="#all" role="tab" aria-selected="false"
+                 style="display:block; text-decoration:none; min-width:240px; background:#374151; border:none;
+                        color:#dbe4ee; border-radius:.6rem; padding:.85rem 1rem;">
+                <div style="font-weight:600;">All Activity (<%= @trade_logs.count %>)</div>
+                <div style="font-size:.85rem; color:#9AA4B2;">Complete transaction history</div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-  <div class="tab-pane fade" id="wallet" role="tabpanel">
-    <h5>Deposits and withdrawals</h5>
-    <%= render partial: "table", locals: { logs: @wallet_logs } %>
-  </div>
+    <!-- Trading History Container -->
+    <div class="card border-0 mb-3" style="background:#1F2937; border-radius:.6rem;">
+      <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-0 px-4 py-3">
+        <h5 class="mb-0 fw-semibold" style="color:#f9fafb;">Trading History (<%= @trade_history.count %>)</h5>
+        <small style="color:#9AA4B2;">Every buy and sell action you've made</small>
+      </div>
 
-  <div class="tab-pane fade" id="all" role="tabpanel">
-    <h5>Complete transaction history</h5>
-    <%= render partial: "table", locals: { logs: @trade_logs } %>
+      <!-- Tab Content -->
+      <div class="tab-content px-3 pb-3">
+        <div class="tab-pane fade show active" id="trade" role="tabpanel">
+          <%= render partial: "table", locals: { logs: @trade_history } %>
+        </div>
+        <div class="tab-pane fade" id="wallet" role="tabpanel">
+          <%= render partial: "table", locals: { logs: @wallet_logs } %>
+        </div>
+        <div class="tab-pane fade" id="all" role="tabpanel">
+          <%= render partial: "table", locals: { logs: @trade_logs } %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
