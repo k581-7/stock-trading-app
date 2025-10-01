@@ -16,18 +16,6 @@
   </div>
 </div>
 
-<%# ===== Errors (if any) ===== %>
-<% if @user.errors.any? %>
-  <div class="alert alert-danger">
-    <div class="fw-semibold mb-1"><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</div>
-    <ul class="mb-0">
-      <% @user.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
 <%# ===== Edit Card / Form ===== %>
 <div class="card border-0 shadow-sm">
   <div class="card-body">
