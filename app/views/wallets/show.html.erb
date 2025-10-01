@@ -38,8 +38,8 @@
     <!-- ➕ Top Up & Withdraw -->
     <div class="row g-4 mb-4">
       <div class="col-md-6">
-        <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
-          <div class="card-header text-white fw-semibold" style="background-color: #198754;">Top Up</div>
+        <div class="card shadow-sm" style="background-color: #1F2937; border: none;">
+          <div class="card-header text-white fw-semibold border-0" style="background-color: #1F2937;">Top Up</div>
           <div class="card-body">
             <%= form_with url: top_up_wallet_path, method: :post, local: true do |f| %>
               <div class="mb-3">
@@ -52,8 +52,8 @@
         </div>
       </div>
       <div class="col-md-6">
-        <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
-          <div class="card-header text-white fw-semibold" style="background-color: #dc3545;">Withdraw</div>
+        <div class="card shadow-sm" style="background-color: #1F2937; border: none;">
+          <div class="card-header text-white fw-semibold border-0" style="background-color: #1F2937;">Withdraw</div>
           <div class="card-body">
             <%= form_with url: withdraw_wallet_path, method: :post, local: true do |f| %>
               <div class="mb-3">
@@ -67,6 +67,45 @@
       </div>
     </div>
 
-    <!-- 📄 Transaction History -->
-    <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
-      <div class="card-header text-light fw-semibold" style="background-color: #1F2937;">
+   <!-- 📄 Transaction History -->
+<div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
+  <div class="card-header text-light fw-semibold" style="background-color: #1F2937;">
+    <i class="bi bi-clock-history me-2 text-info"></i> Transaction History
+  </div>
+  <div class="card-body">
+    <% @wallet_logs.each do |log| %>
+      <% is_deposit = log.transaction_type == "deposit" %>
+      <% is_withdraw = log.transaction_type == "withdraw" %>
+      <% is_buy_sell = log.transaction_type.in?(%w[buy sell]) %>
+      <% icon_class = is_deposit ? 'bi bi-check-circle-fill text-success' : is_withdraw ? 'bi bi-arrow-down-circle-fill text-danger' : 'bi bi-arrow-left-right text-warning' %>
+      <% amount_class = log.amount >= 0 ? 'text-success' : 'text-danger' %>
+
+      <div class="mb-3 p-3 rounded" style="background-color: #111827;">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div class="d-flex align-items-center gap-2">
+            <i class="<%= icon_class %>"></i>
+            <strong class="text-light"><%= log.transaction_type.capitalize %></strong>
+          </div>
+          <div class="text-end">
+            <div class="<%= amount_class %> fw-semibold">
+              <%= log.amount >= 0 ? '+' : '-' %><%= number_to_currency(log.amount.abs) %>
+            </div>
+            <small class="text-secondary">Balance: <%= number_to_currency(log.wallet&.balance || 0) %></small>
+          </div>
+        </div>
+        <div class="text-secondary mb-1">
+          <% if is_buy_sell %>
+            <%= "#{log.transaction_type.capitalize} #{log.quantity} shares of #{log.stock&.symbol}" %>
+          <% elsif is_deposit %>
+            Deposit via bank transfer
+          <% elsif is_withdraw %>
+            Withdrawal to linked account
+          <% else %>
+            —
+          <% end %>
+        </div>
+        <small class="text-muted"><%= log.created_at.strftime("%b %d, %Y %I:%M %p") %></small>
+      </div>
+    <% end %>
+  </div>
+</div>
