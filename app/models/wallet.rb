@@ -1,6 +1,6 @@
 class Wallet < ApplicationRecord
   belongs_to :user
-  has_many :trade_logs
+  has_many :trade_logs, dependent: :destroy
 
   validates :balance, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :user_id, uniqueness: true, presence: true
