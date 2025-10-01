@@ -7,7 +7,7 @@
       <div class="card-body d-flex justify-content-between align-items-center">
         <div>
           <div class="text-secondary small">Total Users</div>
-          <div class="h4 mb-0 fw-bold"><%= @allusers.count %></div>
+          <div class="h4 mb-0 fw-bold"><%= @allusers.where(role: [ "trader", "broker" ]).count %></div>
         </div>
         <div class="rounded-3 bg-primary-subtle text-primary p-3">
           <i class="bi bi-people-fill fs-4"></i>
