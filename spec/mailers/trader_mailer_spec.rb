@@ -20,7 +20,7 @@ RSpec.describe TraderMailer, type: :mailer do
     end
 
     it "sends to the correct email" do
-      expect(mail.to).to eq([trader.email])
+      expect(mail.to).to eq([ trader.email ])
     end
 
     it "renders the body with username" do

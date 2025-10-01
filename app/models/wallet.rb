@@ -6,7 +6,7 @@ class Wallet < ApplicationRecord
   validates :user_id, uniqueness: true, presence: true
 
 def trading_volume
-  trade_logs.where(transaction_type: ["buy", "sell"]).sum(:amount)
+  trade_logs.where(transaction_type: [ "buy", "sell" ]).sum(:amount)
 end
 
   def can_withdraw?(amount)
@@ -21,7 +21,7 @@ end
 
   def total_deposits
     trade_logs.where(transaction_type: "deposit").sum(:amount)
-  end 
+  end
 
   def withdraw(amount)
     return false unless can_withdraw?(amount)

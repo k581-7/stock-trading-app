@@ -37,4 +37,3 @@ RSpec.describe "User Authentication", type: :request do
     expect(response.body).to include("Signed out successfully") # adjust to your flash/message
   end
 end
-

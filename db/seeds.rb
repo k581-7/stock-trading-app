@@ -14,7 +14,7 @@ puts "Admin ready: #{admin.email} / Password1!"
 puts "Seeding stocks and portfolios..."
 
 client = FinnhubRuby::DefaultApi.new
-symbols = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META", "JPM", "V", "MA", "XOM", "UNH"]
+symbols = [ "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META", "JPM", "V", "MA", "XOM", "UNH" ]
 
 symbols.each do |symbol|
   next if Stock.exists?(symbol: symbol)
