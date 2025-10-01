@@ -77,7 +77,6 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
   config.before(:suite) { Warden.test_mode! }
   config.after(:each) { Warden.test_reset! }
-
 end
 
 Shoulda::Matchers.configure do |config|

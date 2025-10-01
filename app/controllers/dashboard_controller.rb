@@ -14,8 +14,8 @@ class DashboardController < ApplicationController
 
     # Trade Stats
     @total_trades = current_user.trade_logs.count
-    @buy_trades   = current_user.trade_logs.where(transaction_type: 'buy').count
-    @sell_trades  = current_user.trade_logs.where(transaction_type: 'sell').count
+    @buy_trades   = current_user.trade_logs.where(transaction_type: "buy").count
+    @sell_trades  = current_user.trade_logs.where(transaction_type: "sell").count
 
     # Activity Logs
     @wallet_logs  = current_user.trade_logs.where(transaction_type: %w[deposit withdraw])
