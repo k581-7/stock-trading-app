@@ -1,130 +1,316 @@
 <%# <meta http-equiv="refresh" content="15"> %>
 
-<div class="container mt-4">
+<style>
+  /* Base Styles - Minimal Custom CSS needed to maintain dark theme look */
+  .portfolio-dashboard {
+    background: #0a0f1e;
+    min-height: 100vh;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  /* Utility Class Overrides (Shortened Custom CSS) */
+  .portfolio-subtitle, .last-updated, .stat-change, .data-label, .holdings-count {
+    color: #6b7280; /* Neutral text color */
+  }
 
-  <!-- Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-semibold text-dark"><i class="bi bi-eye"></i> My Portfolio</h2>
-    <%= button_to "Refresh Stock Prices", update_prices_path, method: :post, class: "btn btn-primary" %>
-  </div>
+  .portfolio-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  /* Primary Button Style (Kept custom for exact color/look) */
+  .refresh-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .refresh-btn:hover { background: #1d4ed8; }
 
-  <!-- Summary Cards -->
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card bg-dark text-white shadow-sm">
-        <div class="card-body">
-          <h6 class="text-white"><i class="bi bi-currency-dollar"></i> Total Portfolio Value</h6>
-          <% total_value = @portfolios.sum { |p| p.stock&.current_price.to_f * p.quantity.to_f } %>
-          <h3 class="fw-bold text-info"><%= number_to_currency(total_value) %></h3>
+  /* Stats Grid Layout (Essential custom style) */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Card Styles (Essential custom style for gradient and border) */
+  .stat-card, .holdings-section {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 1rem;
+    border: 1px solid #1e293b;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card { padding: 1.5rem; }
+  .holdings-section { padding: 1.5rem; }
+
+  /* Card Pseudo-element */
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  }
+
+  /* Icons and Colors */
+  .stat-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .icon-blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+  .icon-green { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+  .positive { color: #22c55e; } /* Green */
+  .negative { color: #ef4444; } /* Red */
+  .status-open { color: #22c55e; font-weight: 500; }
+  .status-closed { color: #6b7280; font-weight: 500; }
+  .text-highlight-blue { color: #3b82f6; }
+
+  /* Buttons (Kept custom to maintain original design, using d-flex for icons) */
+  .trade-btn, .sell-btn, .broker-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .trade-btn { background: #059669; color: white; border: none; padding: 0.5rem 1.25rem; border-radius: 0.5rem; }
+  .trade-btn:hover { background: #047857; color: white; }
+  
+  .sell-btn { background: transparent; color: #fbbf24; border: 1px solid #fbbf24; padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; gap: 0.25rem; }
+  .sell-btn:hover { background: #fbbf24; color: #0a0f1e; }
+
+  .broker-btn { background: transparent; color: #22c55e; border: 1px solid #22c55e; padding: 0.75rem 1.5rem; border-radius: 0.5rem; }
+  .broker-btn:hover { background: #22c55e; color: #0a0f1e; }
+  
+  .broker-section { text-align: right; margin-top: 1.5rem; }
+
+  /* Table Custom Styles (Essential for specific row separation/radius look) */
+  .holdings-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem; /* Gap between rows */
+  }
+
+  .holdings-table thead th {
+    color: #94a3b8;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .holdings-table tbody tr { background: #0f172a; transition: background 0.2s; }
+  .holdings-table tbody tr:hover { background: #1e293b; }
+
+  .holdings-table tbody td {
+    padding: 1.25rem 1rem;
+    border-top: 1px solid #1e293b;
+    border-bottom: 1px solid #1e293b;
+  }
+  .holdings-table tbody td:first-child { border-left: 1px solid #1e293b; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; }
+  .holdings-table tbody td:last-child { border-right: 1px solid #1e293b; border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
+  
+  /* Data Info Layouts (Using Bootstrap fw-semibold for font-weight) */
+  .stock-info, .data-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .stock-symbol, .data-value {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid #22c55e;
+    color: #22c55e;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+</style>
+
+<div class="portfolio-dashboard container-fluid">
+  <div class="container py-4" style="max-width: 1300px;">
+    <% total_value = @portfolios.sum { |p| p.stock&.current_price.to_f * p.quantity.to_f } %>
+    <% total_gain_loss = @portfolios.sum { |p| (p.stock&.price_change.to_f) * p.quantity.to_f } %>
+    <% total_return = total_value > 0 ? (total_gain_loss / total_value) * 100 : 0 %>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="portfolio-title">
+        <i class="bi bi-briefcase-fill" style="font-size: 2rem;"></i>
+        <div>
+          <h1 class="fs-4 fw-bold m-0">My Portfolio</h1>
+          <p class="portfolio-subtitle mb-0">Get snapshot of your current stock holdings and their market value</p>
+        </div>
+      </div>
+      
+      <div class="d-flex align-items-center gap-3">
+        <% if @portfolios.any? && @portfolios.first.stock %>
+          <p class="last-updated mb-0">
+            Last Updated: <%= @portfolios.first.stock.last_updated_at.in_time_zone('Asia/Manila').strftime('%I:%M:%S %p') %>
+          </p>
+        <% end %>
+        <%= button_to "Refresh Prices", update_prices_path, method: :post, class: "refresh-btn" %>
+      </div>
+    </div>
+
+    <div class="stats-grid mb-4">
+      <div class="stat-card">
+        <div class="stat-label">Total Portfolio Value</div>
+        <div class="stat-value text-highlight-blue"><%= number_to_currency(total_value) %></div>
+        <div class="stat-change">Combined value of all holdings</div>
+        <div class="stat-icon icon-blue">
+          <i class="bi bi-currency-dollar"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Total Gain/Loss</div>
+        <div class="stat-value <%= total_gain_loss >= 0 ? 'positive' : 'negative' %>">
+          <%= total_gain_loss >= 0 ? '+' : '' %><%= number_to_currency(total_gain_loss) %>
+        </div>
+        <div class="stat-change">Compared to purchase price (unrealized)</div>
+        <div class="stat-icon <%= total_gain_loss >= 0 ? 'icon-green' : 'icon-blue' %>">
+          <i class="bi bi-graph-up"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Total Return</div>
+        <div class="stat-value <%= total_return >= 0 ? 'positive' : 'negative' %>">
+          <%= total_return >= 0 ? '+' : '' %><%= number_with_precision(total_return, precision: 2) %>%
+        </div>
+        <div class="stat-change">Percentage gain/loss</div>
+        <div class="stat-icon <%= total_return >= 0 ? 'icon-green' : 'icon-blue' %>">
+          <i class="bi bi-percent"></i>
         </div>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card bg-dark text-white shadow-sm">
-        <div class="card-body">
-          <h6 class="text-white"><i class="bi bi-graph-up-arrow"></i> Total Gain/Loss</h6>
-          <% total_gain_loss = @portfolios.sum { |p| (p.stock&.price_change.to_f) * p.quantity.to_f } %>
-          <h3 class="fw-bold <%= total_gain_loss >= 0 ? 'text-success' : 'text-danger' %>">
-            <%= number_to_currency(total_gain_loss) %>
-          </h3>
+    <div class="holdings-section mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+        <div>
+          <h2 class="fs-5 fw-semibold mb-1">
+            <i class="bi bi-bar-chart-fill"></i> Current Holdings <span class="holdings-count">(<%= @portfolios.count %>)</span>
+          </h2>
+          <p class="holdings-description mb-0">Monitor your stock-by-stock gains, gains total, diverse investment portfolio.</p>
         </div>
+        <%= link_to new_trade_path, class: "trade-btn" do %>
+          <i class="bi bi-arrow-left-right"></i> Trade
+        <% end %>
       </div>
-    </div>
 
-    <div class="col-md-4">
-      <div class="card bg-dark text-white shadow-sm">
-        <div class="card-body">
-          <h6 class="text-white"><i class="bi bi-person-badge"></i> Total Return</h6>
-          <% total_return = total_value > 0 ? (total_gain_loss / total_value) * 100 : 0 %>
-          <h3 class="fw-bold <%= total_return >= 0 ? 'text-success' : 'text-danger' %>">
-            <%= number_with_precision(total_return, precision: 2) %>%>
-          </h3>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Portfolio Table -->
-  <div class="card bg-dark text-white shadow-sm">
-    <div class="card-body">
-      <table class="table table-dark table-hover align-middle mb-0">
-        <thead>
-          <tr>
-            <th colspan="4" class="text-start">
-              <span class="fw-semibold text-white"><i class="bi bi-bar-chart-fill"></i> Current Holdings (<%= @portfolios.count %>)</span>
-            </th>
-            <th colspan="4" class="text-end">
-              <%= link_to "Trade", new_trade_path, class: "btn btn-outline-light btn-sm" %>
-            </th>
-          </tr>
-          <tr>
-            <th>Symbol</th>
-            <th>Shares Owned</th>
-            <th>Current Price</th>
-            <th>Price Change</th>
-            <th>% Change</th>
-            <th>Market Value</th>
-            <th>Last Updated</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @portfolios.each do |p| %>
-            <% next unless p.stock %>
-            <% live_price = p.stock.current_price.to_f %>
-            <% market_value = live_price * p.quantity.to_f %>
-
+      <div class="table-responsive">
+        <table class="holdings-table">
+          <thead>
             <tr>
-              <td class="fw-bold"><%= p.stock.symbol %></td>
-              <td><%= p.quantity %></td>
-              <td class="text-info"><%= number_to_currency(live_price) %></td>
-
-              <!-- Price change -->
-              <td style="color: <%= p.stock.price_change.to_f >= 0 ? 'lime' : 'red' %>;">
-                <%= p.stock.price_change.to_f >= 0 ? '▲ +' : '▼ ' %>
-                <%= number_with_precision(p.stock.price_change, precision: 2) %>
-              </td>
-
-              <!-- Percent change -->
-              <td style="color: <%= p.stock.percent_change.to_f >= 0 ? 'lime' : 'red' %>;">
-                <%= p.stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
-                <%= number_with_precision(p.stock.percent_change, precision: 2) %>%>
-              </td>
-
-              <td class="fw-semibold"><%= number_to_currency(market_value) %></td>
-
-              <!-- Last updated -->
-              <td><%= p.stock.last_updated_at.in_time_zone('Asia/Manila').strftime('%H:%M:%S') %></td>
-
-              <!-- Market status -->
-              <td style="color: <%= p.stock.market_open ? 'lime' : 'gray' %>;">
-                <%= p.stock.market_open ? 'Open' : 'Closed' %>
-              </td>
-
-              <!-- Action buttons -->
-              <td>
-                <%= button_to "Sell", new_trade_path(stock_id: p.stock.id, action_type: 'sell', portfolio_id: p.id),
-                    method: :get, class: "btn btn-sm btn-outline-warning" %>
-              </td>
+              <th>Stock</th>
+              <th>Shares Owned</th>
+              <th>Current Price</th>
+              <th>Price Change</th>
+              <th>% Change</th>
+              <th>Market Value</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% @portfolios.each do |p| %>
+              <% next unless p.stock %>
+              <% live_price = p.stock.current_price.to_f %>
+              <% market_value = live_price * p.quantity.to_f %>
+
+              <tr>
+                <td>
+                  <div class="stock-info">
+                    <div class="stock-symbol"><%= p.stock.symbol %></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="data-info">
+                    <div class="data-value"><%= p.quantity %></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="data-info">
+                    <div class="data-value text-highlight-blue"><%= number_to_currency(live_price) %></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="data-info <%= p.stock.price_change.to_f >= 0 ? 'positive' : 'negative' %>">
+                    <div class="data-value">
+                      <%= p.stock.price_change.to_f >= 0 ? '▲ +' : '▼ ' %>
+                      <%= number_with_precision(p.stock.price_change, precision: 2) %>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="data-info <%= p.stock.percent_change.to_f >= 0 ? 'positive' : 'negative' %>">
+                    <div class="data-value">
+                      <%= p.stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
+                      <%= number_with_precision(p.stock.percent_change, precision: 2) %>%
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="data-info">
+                    <div class="data-value"><%= number_to_currency(market_value) %></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="data-info">
+                    <div class="<%= p.stock.market_open ? 'status-open' : 'status-closed' %>">
+                      <%= p.stock.market_open ? '● Open' : '○ Closed' %>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <%= button_to new_trade_path(stock_id: p.stock.id),
+                      method: :get, 
+                      class: "btn btn-sm btn-warning" do %>
+                      <i class="bi bi-currency-dollar me-1"></i> Sell
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
 
-  <!-- Broker Button -->
-  <div class="text-end mt-3">
-    <%= button_to "Apply to be a Broker", apply_broker_user_path(current_user),
-        method: :patch, class: "btn btn-outline-success" %>
-  </div>
-
-  <% if notice %>
-    <div class="alert alert-success mt-3">
-      <%= notice %>
+    <div class="broker-section">
+      <%= button_to apply_broker_user_path(current_user),
+          method: :patch, class: "broker-btn" do %>
+        <i class="bi bi-person-workspace"></i> Apply to be a Broker
+      <% end %>
     </div>
-  <% end %>
 
+    <% if notice %>
+      <div class="alert-success">
+        <%= notice %>
+      </div>
+    <% end %>
+  </div>
 </div>

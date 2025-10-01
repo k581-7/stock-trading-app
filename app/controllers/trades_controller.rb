@@ -5,10 +5,15 @@ class TradesController < ApplicationController
   def new
     @stocks = Stock.order(:symbol)
 
-    # Add Top Gainers and Losers for UI display
+    if params[:stock_id].present?
+      @selected_stock = Stock.find_by(id: params[:stock_id])
+      @portfolio_entry = current_user.portfolios.find_by(stock: @selected_stock)
+    end
+
     @top_gainers = Stock.where("percent_change > 0").order(percent_change: :desc).limit(3)
-    @top_losers  = Stock.where("percent_change < 0").order(percent_change: :asc).limit(3)
+    @top_losers = Stock.where("percent_change < 0").order(percent_change: :asc).limit(3)
   end
+
 
   def buy
     stock  = Stock.find(params[:stock_id])
@@ -48,6 +53,8 @@ class TradesController < ApplicationController
     price  = BigDecimal(stock.current_price.to_s)
     revenue = shares * price
 
+    remaining_quantity = 0
+
     return head :unprocessable_content if shares <= 0
 
     unless current_user.approved?
@@ -62,7 +69,14 @@ class TradesController < ApplicationController
 
     ActiveRecord::Base.transaction do
       wallet.update!(balance: wallet.balance + revenue)
-      portfolio.update!(quantity: portfolio.quantity - shares)
+
+      remaining_quantity = portfolio.quantity - shares
+
+      if remaining_quantity <= 0
+        portfolio.destroy!
+      else
+        portfolio.update!(quantity: remaining_quantity)
+      end
 
       TradeLog.create!(
         user: current_user,
@@ -74,6 +88,10 @@ class TradesController < ApplicationController
       )
     end
 
-    redirect_to trade_logs_path, notice: "Sell executed."
+    if remaining_quantity <= 0
+      redirect_to portfolios_path, notice: "All shares of #{stock.symbol} sold successfully."
+    else
+      redirect_to portfolios_path, notice: "Sell executed. Remaining shares: #{remaining_quantity.to_i}."
+    end
   end
 end

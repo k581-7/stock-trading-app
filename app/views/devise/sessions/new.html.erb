@@ -1,26 +1,176 @@
-<h2>Log in</h2>
+<style>
+body {
+    background-color: #121226;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    background-image:
+        linear-gradient(45deg, rgba(230, 0, 126, 0.05) 25%, transparent 25%, transparent 75%, rgba(230, 0, 126, 0.05) 75%, rgba(230, 0, 126, 0.05) 100%),
+        linear-gradient(-45deg, rgba(230, 0, 126, 0.05) 25%, transparent 25%, transparent 75%, rgba(230, 0, 126, 0.05) 75%, rgba(230, 0, 126, 0.05) 100%);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+    animation: background-pan 60s linear infinite;
+}
+
+@keyframes background-pan {
+    from {
+        background-position: 0 0, 20px 20px;
+    }
+    to {
+        background-position: 40px 40px, 60px 60px;
+    }
+}
+
+.login-container {
+    background-color: #1c1c3a;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+}
+
+.logo-wrapper {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.pnm-logo {
+    width: 150px;
+    height: auto;
+}
+
+h2 {
+    color: #f0f0f0;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    font-size: 2em;
+}
+
+.field {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #a0a0c0;
+    font-size: 0.9em;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #3a3a5a;
+    border-radius: 4px;
+    background-color: #2a2a4c;
+    color: #f0f0f0;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #e6007e;
+    outline: none;
+    box-shadow: 0 0 0 1px #e6007e;
+}
+
+.field input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.actions {
+    margin-top: 30px;
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #e6007e; 
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    letter-spacing: 0.5px;
+}
+
+input[type="submit"]:hover {
+    background-color: #ff2a9d;
+}
+
+input[type="submit"]:active {
+    transform: translateY(1px);
+}
+
+
+.links a {
+    color: #00bfff;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    margin-top: 5px; /* Reduced spacing */
+    font-size: 0.9em;
+    transition: color 0.3s;
+}
+
+.links a:hover {
+    color: #e6007e;
+    text-decoration: underline;
+}
+
+.links {
+    text-align: center;
+    margin-top: 15px; /* Reduced spacing */
+}
+</style>
+
+<div class="login-container">
+  <div class="logo-wrapper">
+    <%= image_tag "pnm_transparent.png", alt: "PNM Trading Logo", class: "pnm-logo" %>
   </div>
+  
+  <h2>Log in</h2>
 
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
-
-  <% if devise_mapping.rememberable? %>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
     <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me %>
+      <%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    </div>
+
+    <div class="field">
+      <%= f.label :password %><br />
+      <%= f.password_field :password, autocomplete: "current-password" %>
+    </div>
+
+    <% if devise_mapping.rememberable? %>
+      <div class="field">
+        <%= f.check_box :remember_me %>
+        <%= f.label :remember_me %>
+      </div>
+    <% end %>
+
+    <div class="actions">
+      <%= f.submit "Log in" %>
     </div>
   <% end %>
-
-  <div class="actions">
-    <%= f.submit "Log in" %>
+  
+  <div class="links">
+    <%= render "devise/shared/links" %>
   </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>
