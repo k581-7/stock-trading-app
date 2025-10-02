@@ -287,8 +287,9 @@
                   </div>
                 </td>
                 <td>
-                  <%= button_to new_trade_path(stock_id: p.stock.id),
-                      method: :get, 
+                  <%= button_to sell_portfolio_path(p),
+                      method: :post, 
+                      params: { quantity: p.quantity }, 
                       class: "btn btn-sm btn-warning" do %>
                       <i class="bi bi-currency-dollar me-1"></i> Sell
                   <% end %>

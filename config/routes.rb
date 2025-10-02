@@ -7,7 +7,18 @@ Rails.application.routes.draw do
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
-  resources :portfolios
+  resources :portfolios do 
+    member do
+      post :sell
+    end
+  end
+
+  # --- Stocks routes ---
+  resources :stocks do
+    collection do
+      post :update_prices
+    end
+  end
 
   # dashboard
   get "dashboard", to: "dashboard#index"

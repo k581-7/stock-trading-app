@@ -76,9 +76,26 @@
       <%= link_to admin_transactions_path, class: "btn btn-purple-subtle border-0 btn-lg d-flex align-items-center gap-2" do %>
         <i class="bi bi-activity"></i> View Transactions
       <% end %>
+
+      <%# ✅ Grouped button + last updated text %>
+      <div class="d-flex align-items-center gap-2">
+        <%= button_to update_prices_path,
+              method: :post,
+              class: "btn btn-danger-subtle border-0 btn-lg d-flex align-items-center gap-2 m-0" do %>
+          <i class="bi bi-arrow-clockwise"></i> Refresh Prices
+        <% end %>
+
+        <% if Stock.any? %>
+          <small class="text-muted">
+            Last updated: <%= Stock.maximum(:updated_at).in_time_zone("Asia/Manila").strftime("%b. %-d, %Y %I:%M%p") %>
+          </small>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>
+
+
 
 <!-- Recent Activity -->
 <div class="card border-0 shadow-sm">
