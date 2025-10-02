@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Portfolios", type: :request do
   include Devise::Test::IntegrationHelpers  # ✅ Add this!
-  
+
   let(:user) do
     User.create!(
       username: "test",
@@ -38,7 +38,7 @@ RSpec.describe "Portfolios", type: :request do
       get portfolios_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("SMPL") 
+      expect(response.body).to include("SMPL")
     end
   end
 end
