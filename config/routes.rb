@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
-  resources :portfolios do 
+  resources :portfolios do
     member do
       post :sell
     end

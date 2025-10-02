@@ -71,9 +71,9 @@ class PortfoliosController < ApplicationController
       current_user.wallet.increment!(:balance, sell_value)
 
       redirect_to portfolios_path, notice: "Sold #{sell_quantity} shares of #{@stock.symbol} for #{sell_value}."
-  else
+    else
       redirect_to portfolios_path, alert: "Invalid sell quantity."
-  end
+    end
 end
 
   private

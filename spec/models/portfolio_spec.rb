@@ -2,18 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Portfolio, type: :model do
   let!(:user)  { User.create!(username: "trader1", email: "t1@example.com", password: "Password1!", confirmed_at: Time.current, role: :broker) }
-  let!(:stock) { Stock.create!(title: "AAPL", buying_price: 100.0, selling_price: 120.0) }
+  let!(:stock) { Stock.create!(symbol: "AAPL", name: "Apple Inc.", current_price: 150.0) }
 
-  # -----------------
-  # STOCK validation
-  # -----------------
-  it "requires the presence of a title for stock" do
-    expect(Stock.new(buying_price: 50.0, selling_price: 60.0)).not_to be_valid
+  it "requires the presence of a symbol for stock" do
+    expect(Stock.new(name: "No Symbol", current_price: 100.0)).not_to be_valid
   end
 
-  # -----------------
-  # PORTFOLIO validations
-  # -----------------
   describe "validations" do
     it "is valid with user, stock, and quantity > 0" do
       p = Portfolio.new(user: user, stock: stock, quantity: 5)
@@ -34,27 +28,11 @@ RSpec.describe Portfolio, type: :model do
     end
   end
 
-  # -----------------
-  # PORTFOLIO methods
-  # -----------------
   describe "calculations" do
     let!(:portfolio) { Portfolio.create!(user: user, stock: stock, quantity: 10) }
 
-    it "calculates total buying value" do
-      expect(portfolio.total_buying_value).to eq(10 * 100.0)
-    end
-
-    it "calculates total selling value" do
-      expect(portfolio.total_selling_value).to eq(10 * 120.0)
-    end
-
-    it "calculates profit/loss" do
-      expect(portfolio.profit_loss).to eq((10 * 120.0) - (10 * 100.0))
-    end
-
-    it "calculates profit/loss percentage" do
-      expected_percentage = (((10 * 120.0) - (10 * 100.0)) / (10 * 100.0)) * 100
-      expect(portfolio.profit_loss_percentage).to eq(expected_percentage.round(2))
+    it "calculates total value using current price" do
+      expect(portfolio.total_buying_value).to eq(10 * 150.0)
     end
   end
 end

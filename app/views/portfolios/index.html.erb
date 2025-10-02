@@ -167,12 +167,6 @@
       </div>
       
       <div class="d-flex align-items-center gap-3">
-        <% if @portfolios.any? && @portfolios.first.stock %>
-          <p class="last-updated mb-0">
-            Last Updated: <%= @portfolios.first.stock.last_updated_at.in_time_zone('Asia/Manila').strftime('%I:%M:%S %p') %>
-          </p>
-        <% end %>
-        <%= button_to "Refresh Prices", update_prices_path, method: :post, class: "refresh-btn" %>
       </div>
     </div>
 
@@ -222,83 +216,98 @@
         <% end %>
       </div>
 
-      <div class="table-responsive">
-        <table class="holdings-table">
-          <thead>
-            <tr>
-              <th>Stock</th>
-              <th>Shares Owned</th>
-              <th>Current Price</th>
-              <th>Price Change</th>
-              <th>% Change</th>
-              <th>Market Value</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @portfolios.each do |p| %>
-              <% next unless p.stock %>
-              <% live_price = p.stock.current_price.to_f %>
-              <% market_value = live_price * p.quantity.to_f %>
+    <div class="table-responsive">
+      <table class="holdings-table">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Shares Owned</th>
+            <th>Current Price</th>
+            <th>Price Change</th>
+            <th>% Change</th>
+            <th>Market Value</th>
+            <th>Last Updated</th> <!-- ✅ New column -->
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @portfolios.each do |p| %>
+            <% next unless p.stock %>
+            <% live_price = p.stock.current_price.to_f %>
+            <% market_value = live_price * p.quantity.to_f %>
+            <% last_updated = p.stock.last_updated_at || p.stock.updated_at %>
 
-              <tr>
-                <td>
-                  <div class="stock-info">
-                    <div class="stock-symbol"><%= p.stock.symbol %></div>
+            <tr>
+              <td>
+                <div class="stock-info">
+                  <div class="stock-symbol"><%= p.stock.symbol %></div>
+                </div>
+              </td>
+              <td>
+                <div class="data-info">
+                  <div class="data-value"><%= p.quantity %></div>
+                </div>
+              </td>
+              <td>
+                <div class="data-info">
+                  <div class="data-value text-highlight-blue"><%= number_to_currency(live_price) %></div>
+                </div>
+              </td>
+              <td>
+                <div class="data-info <%= p.stock.price_change.to_f >= 0 ? 'positive' : 'negative' %>">
+                  <div class="data-value">
+                    <%= p.stock.price_change.to_f >= 0 ? '▲ +' : '▼ ' %>
+                    <%= number_with_precision(p.stock.price_change, precision: 2) %>
                   </div>
-                </td>
-                <td>
-                  <div class="data-info">
-                    <div class="data-value"><%= p.quantity %></div>
+                </div>
+              </td>
+              <td>
+                <div class="data-info <%= p.stock.percent_change.to_f >= 0 ? 'positive' : 'negative' %>">
+                  <div class="data-value">
+                    <%= p.stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
+                    <%= number_with_precision(p.stock.percent_change, precision: 2) %>%
                   </div>
-                </td>
-                <td>
-                  <div class="data-info">
-                    <div class="data-value text-highlight-blue"><%= number_to_currency(live_price) %></div>
+                </div>
+              </td>
+              <td>
+                <div class="data-info">
+                  <div class="data-value"><%= number_to_currency(market_value) %></div>
+                </div>
+              </td>
+
+              <!-- ✅ New Last Updated column -->
+              <td>
+                <div class="data-info">
+                  <div class="data-value">
+                    <% if last_updated %>
+                      <%= last_updated.in_time_zone("Asia/Manila").strftime("%b. %-d, %Y %I:%M%p") %>
+                    <% else %>
+                      N/A
+                    <% end %>
                   </div>
-                </td>
-                <td>
-                  <div class="data-info <%= p.stock.price_change.to_f >= 0 ? 'positive' : 'negative' %>">
-                    <div class="data-value">
-                      <%= p.stock.price_change.to_f >= 0 ? '▲ +' : '▼ ' %>
-                      <%= number_with_precision(p.stock.price_change, precision: 2) %>
-                    </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="data-info">
+                  <div class="<%= p.stock.market_open ? 'status-open' : 'status-closed' %>">
+                    <%= p.stock.market_open ? '● Open' : '○ Closed' %>
                   </div>
-                </td>
-                <td>
-                  <div class="data-info <%= p.stock.percent_change.to_f >= 0 ? 'positive' : 'negative' %>">
-                    <div class="data-value">
-                      <%= p.stock.percent_change.to_f >= 0 ? '▲ +' : '▼ ' %>
-                      <%= number_with_precision(p.stock.percent_change, precision: 2) %>%
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="data-info">
-                    <div class="data-value"><%= number_to_currency(market_value) %></div>
-                  </div>
-                </td>
-                <td>
-                  <div class="data-info">
-                    <div class="<%= p.stock.market_open ? 'status-open' : 'status-closed' %>">
-                      <%= p.stock.market_open ? '● Open' : '○ Closed' %>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <%= button_to sell_portfolio_path(p),
-                      method: :post, 
-                      params: { quantity: p.quantity }, 
-                      class: "btn btn-sm btn-warning" do %>
-                      <i class="bi bi-currency-dollar me-1"></i> Sell
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+                </div>
+              </td>
+              <td>
+                <%= button_to sell_portfolio_path(p),
+                    method: :post, 
+                    params: { quantity: p.quantity }, 
+                    class: "btn btn-sm btn-warning" do %>
+                    <i class="bi bi-currency-dollar me-1"></i> Sell
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
 
     <div class="broker-section">
@@ -307,11 +316,5 @@
         <i class="bi bi-person-workspace"></i> Apply to be a Broker
       <% end %>
     </div>
-
-    <% if notice %>
-      <div class="alert-success">
-        <%= notice %>
-      </div>
-    <% end %>
   </div>
 </div>
