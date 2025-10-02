@@ -13,13 +13,14 @@ RSpec.describe "Portfolios", type: :request do
 
   describe "GET /portfolios" do
     let!(:own_portfolio) { Portfolio.create!(user: user, stock: stock, quantity: 5) }
-    let!(:other_portfolio) { Portfolio.create!(user: other_user, stock: stock, quantity: 15) }
+    let!(:other_portfolio) { Portfolio.create!(user: other_user, stock: stock, quantity: 99) }
 
     it "shows only current_user's portfolios" do
       get portfolios_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(own_portfolio.quantity.to_s)
-      expect(response.body).not_to include(other_portfolio.quantity.to_s)
+      expect(response.body).to include(stock.symbol)
+      expect(response.body).to include("5")
+      expect(response.body).not_to include("99")
     end
   end
 

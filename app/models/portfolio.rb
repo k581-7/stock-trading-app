@@ -2,17 +2,16 @@ class Portfolio < ApplicationRecord
   belongs_to :user
   belongs_to :stock
 
-  validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :quantity, presence: true, numericality: { greater_than: 0 }
   validates :user_id, uniqueness: { scope: :stock_id, message: "can only have one portfolio per stock" }
   validates :stock_id, presence: true
 
-
   def total_buying_value
-    quantity * stock.buying_price
+    quantity * stock.current_price.to_f
   end
 
   def total_selling_value
-    quantity * stock.selling_price
+    quantity * stock.current_price.to_f
   end
 
   def profit_loss
