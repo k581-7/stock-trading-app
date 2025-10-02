@@ -51,7 +51,30 @@ class PortfoliosController < ApplicationController
     redirect_to portfolios_path, notice: "Stock prices are updating..."
   end
 
+  def sell
+    @portfolio = Portfolio.find(params[:id])
+    @stock = @portfolio.stock
 
+    sell_quantity = params[:quantity].to_i
+    sell_quantity = @portfolio.quantity if sell_quantity <= 0 # fallback, sell all
+
+    if sell_quantity > 0 && sell_quantity <= @portfolio.quantity
+      sell_value = @stock.current_price.to_f * sell_quantity
+
+      # update portfolio quantity
+      @portfolio.update(quantity: @portfolio.quantity - sell_quantity)
+
+      # delete portfolio row if ubos na
+      @portfolio.destroy if @portfolio.quantity <= 0
+
+      # update wallet balance (example: kung may wallet model ka)
+      current_user.wallet.increment!(:balance, sell_value)
+
+      redirect_to portfolios_path, notice: "Sold #{sell_quantity} shares of #{@stock.symbol} for #{sell_value}."
+  else
+      redirect_to portfolios_path, alert: "Invalid sell quantity."
+  end
+end
 
   private
 

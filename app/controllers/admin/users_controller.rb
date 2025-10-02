@@ -8,6 +8,7 @@ class Admin::UsersController < ApplicationController
     @users = User.where(approved: false, role: :trader)
     @pending_brokers = User.where(broker_status: :broker_pending, role: :trader)
     @approved_brokers = User.where(broker_status: :broker_approved)
+    @last_stock_update = Stock.where.not(last_updated_at: nil).maximum(:last_updated_at)
   end
 
   def new
