@@ -9,8 +9,8 @@ class UpdateStockPricesJob < ApplicationJob
       config.api_key["api_key"] = ENV["FINNHUB_API_KEY"]
     end
 
-    Stock.find_each do |stock|
-      client = FinnhubRuby::DefaultApi.new
+    client = FinnhubRuby::DefaultApi.new
+      Stock.find_each do |stock|
 
       begin
         quote = client.quote(stock.symbol)
