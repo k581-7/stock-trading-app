@@ -104,10 +104,10 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :username, :password, :approved)
+    params.require(:user).permit(:email, :username, :first_name, :last_name, :password, :approved)
   end
 
   def user_edit_params
-    params.require(:user).permit(:email, :username)
+    params.require(:user).permit(:email, :username, :first_name, :last_name)
   end
 end

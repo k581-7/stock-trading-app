@@ -1,9 +1,7 @@
 <div class="container-xl pt-4 pb-5 px-3 px-md-4 px-lg-5">
-  <%# Back + Title + Edit %>
   <div class="d-flex align-items-center gap-2 mb-3">
     <%= link_to admin_users_path, class: "text-decoration-none d-flex align-items-center gap-2" do %>
-      <i class="bi bi-arrow-left"></i>
-      <span>Back to Users</span>
+      <i class="bi bi-arrow-left"></i><span>Back to Users</span>
     <% end %>
   </div>
 
@@ -13,7 +11,11 @@
     </div>
     <div>
       <h4 class="mb-0 fw-semibold">User Details</h4>
-      <small class="text-secondary"><%= @user.username.presence || @user.email.split("@").first %></small>
+      <small class="text-secondary">
+        <%= ([@user.first_name, @user.last_name].map(&:presence).compact.join(" ").presence ||
+             @user.username.presence ||
+             @user.email.split("@").first) %>
+      </small>
     </div>
     <div class="ms-auto">
       <%= link_to edit_admin_user_path(@user), class: "btn btn-primary d-inline-flex align-items-center gap-2" do %>
@@ -22,7 +24,6 @@
     </div>
   </div>
 
-  <%# Profile Card %>
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-start">
@@ -31,7 +32,9 @@
             <i class="bi bi-person fs-3"></i>
           </div>
           <div>
-            <h5 class="mb-1 fw-semibold"><%= @user.username.presence || "—" %></h5>
+            <h5 class="mb-1 fw-semibold">
+              <%= ([@user.first_name, @user.last_name].map(&:presence).compact.join(" ").presence || "—") %>
+            </h5>
             <div class="text-secondary"><%= @user.email %></div>
             <small class="text-secondary d-block">User ID: <%= @user.id %></small>
           </div>
@@ -79,7 +82,7 @@
     </div>
   </div>
 
-  <%# Personal Info %>
+  <!-- Personal Info -->
   <div class="card border-0 shadow-sm">
     <div class="card-body">
       <div class="d-flex align-items-center gap-2 mb-3">
@@ -88,12 +91,19 @@
       </div>
 
       <div class="row">
-        <div class="col-12 col-md-6 mb-3">
+        <div class="col-12 col-md-3 mb-3">
+          <div class="text-secondary small">First Name</div>
+          <div><%= @user.first_name.presence || "—" %></div>
+        </div>
+        <div class="col-12 col-md-3 mb-3">
+          <div class="text-secondary small">Last Name</div>
+          <div><%= @user.last_name.presence || "—" %></div>
+        </div>
+        <div class="col-12 col-md-3 mb-3">
           <div class="text-secondary small">Username</div>
           <div><%= @user.username.presence || "—" %></div>
         </div>
-
-        <div class="col-12 col-md-6 mb-3">
+        <div class="col-12 col-md-3 mb-3">
           <div class="text-secondary small">Email</div>
           <div><%= @user.email %></div>
         </div>
@@ -107,9 +117,9 @@
 </div>
 
 <style>
-  .bg-primary-subtle  { background:#e7f1ff!important; color:#0d6efd!important; }
-  .bg-success-subtle  { background:#e9f7ef!important; color:#198754!important; }
-  .bg-warning-subtle  { background:#fff3cd!important; color:#b58100!important; }
+  .bg-primary-subtle{ background:#e7f1ff!important; color:#0d6efd!important; }
+  .bg-success-subtle{ background:#e9f7ef!important; color:#198754!important; }
+  .bg-warning-subtle{ background:#fff3cd!important; color:#b58100!important; }
   .bg-secondary-subtle{ background:#f1f3f5!important; color:#6c757d!important; }
-  .bg-light-subtle    { background:#f8f9fa!important; }
+  .bg-light-subtle  { background:#f8f9fa!important; }
 </style>

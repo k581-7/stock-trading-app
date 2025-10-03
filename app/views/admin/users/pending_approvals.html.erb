@@ -1,4 +1,4 @@
-<div class="container-xl px-3 px-md-4 px-lg-5">
+<div class="container-xl pt-4 pb-5 px-3 px-md-4 px-lg-5">
 
   <!-- Trader Approvals -->
   <div class="d-flex align-items-center gap-2 mb-2 mt-1">
@@ -18,18 +18,20 @@
         <div class="col-12 col-md-6">
           <div class="card border-warning rounded-4 shadow-sm h-100">
             <div class="card-body px-4">
-
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div class="d-flex align-items-center">
                   <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
                     <i class="bi bi-alarm fs-5"></i>
                   </div>
                   <div>
-                    <div class="fw-semibold"><%= user.username.presence || user.email.split("@").first %></div>
+                    <div class="fw-semibold">
+                      <%= ([user.first_name, user.last_name].map(&:presence).compact.join(" ").presence ||
+                           user.username.presence ||
+                           user.email.split("@").first) %>
+                    </div>
                     <small class="text-secondary">Application ID: <%= user.id %></small>
                   </div>
                 </div>
-
                 <span class="badge rounded-pill bg-primary-subtle text-primary">
                   <i class="bi bi-person-badge me-1"></i> Trader Application
                 </span>
@@ -37,12 +39,10 @@
 
               <ul class="list-unstyled mb-3">
                 <li class="mb-1">
-                  <i class="bi bi-envelope me-2 text-secondary"></i>
-                  <%= user.email %>
+                  <i class="bi bi-envelope me-2 text-secondary"></i> <%= user.email %>
                 </li>
                 <li class="mb-1">
-                  <i class="bi bi-calendar2 me-2 text-secondary"></i>
-                  Applied <%= time_ago_in_words(user.created_at) %> ago
+                  <i class="bi bi-calendar2 me-2 text-secondary"></i> Applied <%= time_ago_in_words(user.created_at) %> ago
                 </li>
                 <li class="mb-1 d-flex align-items-center">
                   <span class="rounded-circle d-inline-block me-2 bg-warning" style="width:8px;height:8px;"></span>
@@ -54,14 +54,12 @@
                 <%= link_to admin_user_path(user), class: "btn btn-light border d-flex align-items-center gap-2" do %>
                   <i class="bi bi-eye"></i> View Details
                 <% end %>
-
                 <%= button_to approve_admin_user_path(user),
                       method: :patch,
                       class: "btn btn-warning text-dark d-flex align-items-center gap-2",
                       form: { data: { turbo_confirm: "Approve this Trader application?" } } do %>
                   <i class="bi bi-check2-circle"></i> Approve as Trader
                 <% end %>
-
                 <%= button_to delete_admin_user_path(user),
                       method: :delete,
                       class: "btn btn-danger d-flex align-items-center gap-2",
@@ -95,18 +93,20 @@
         <div class="col-12 col-md-6">
           <div class="card border-warning rounded-4 shadow-sm h-100">
             <div class="card-body px-4">
-
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div class="d-flex align-items-center">
                   <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
                     <i class="bi bi-alarm fs-5"></i>
                   </div>
                   <div>
-                    <div class="fw-semibold"><%= user.username.presence || user.email.split("@").first %></div>
+                    <div class="fw-semibold">
+                      <%= ([user.first_name, user.last_name].map(&:presence).compact.join(" ").presence ||
+                           user.username.presence ||
+                           user.email.split("@").first) %>
+                    </div>
                     <small class="text-secondary">Application ID: <%= user.id %></small>
                   </div>
                 </div>
-
                 <span class="badge rounded-pill bg-warning-subtle text-warning">
                   <i class="bi bi-exclamation-triangle me-1"></i> Broker Application
                 </span>
@@ -114,12 +114,10 @@
 
               <ul class="list-unstyled mb-3">
                 <li class="mb-1">
-                  <i class="bi bi-envelope me-2 text-secondary"></i>
-                  <%= user.email %>
+                  <i class="bi bi-envelope me-2 text-secondary"></i> <%= user.email %>
                 </li>
                 <li class="mb-1">
-                  <i class="bi bi-calendar2 me-2 text-secondary"></i>
-                  Applied <%= time_ago_in_words(user.created_at) %> ago
+                  <i class="bi bi-calendar2 me-2 text-secondary"></i> Applied <%= time_ago_in_words(user.created_at) %> ago
                 </li>
                 <li class="mb-1 d-flex align-items-center">
                   <span class="rounded-circle d-inline-block me-2 bg-warning" style="width:8px;height:8px;"></span>
@@ -131,14 +129,12 @@
                 <%= link_to admin_user_path(user), class: "btn btn-light border d-flex align-items-center gap-2" do %>
                   <i class="bi bi-eye"></i> View Details
                 <% end %>
-
                 <%= button_to approve_broker_admin_user_path(user),
                       method: :patch,
                       class: "btn btn-warning text-dark d-flex align-items-center gap-2",
                       form: { data: { turbo_confirm: "Approve this Broker application?" } } do %>
                   <i class="bi bi-check2-circle"></i> Approve as Broker
                 <% end %>
-
                 <%= button_to reject_broker_admin_user_path(user),
                       method: :patch,
                       class: "btn btn-danger d-flex align-items-center gap-2",
@@ -157,6 +153,6 @@
 </div>
 
 <style>
-  .bg-primary-subtle  { background:#e7f1ff!important; color:#0d6efd!important; }
-  .bg-warning-subtle  { background:#fff3cd!important; color:#b58100!important; }
+  .bg-primary-subtle{ background:#e7f1ff!important; color:#0d6efd!important; }
+  .bg-warning-subtle{ background:#fff3cd!important; color:#b58100!important; }
 </style>
