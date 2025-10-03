@@ -1,8 +1,7 @@
 <div class="container-xl pt-4 pb-5 px-3 px-md-4 px-lg-5">
   <div class="d-flex align-items-center gap-2 mb-3">
     <%= link_to admin_user_path(@user), class: "text-decoration-none d-flex align-items-center gap-2" do %>
-      <i class="bi bi-arrow-left"></i>
-      <span>Back to User</span>
+      <i class="bi bi-arrow-left"></i><span>Back to User</span>
     <% end %>
   </div>
 
@@ -12,7 +11,11 @@
     </div>
     <div>
       <h4 class="mb-0 fw-semibold">Edit User</h4>
-      <small class="text-secondary"><%= @user.username.presence || @user.email.split("@").first %></small>
+      <small class="text-secondary">
+        <%= ([@user.first_name, @user.last_name].map(&:presence).compact.join(" ").presence ||
+             @user.username.presence ||
+             @user.email.split("@").first) %>
+      </small>
     </div>
   </div>
 
@@ -29,21 +32,20 @@
 
   <div class="card border-0 shadow-sm">
     <div class="card-body">
-      <div class="d-flex align-items-center mb-3">
-        <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">
-          <i class="bi bi-person fs-3"></i>
-        </div>
-        <div>
-          <div class="fw-semibold"><%= @user.username.presence || "—" %></div>
-          <small class="text-secondary d-block">User ID: <%= @user.id %></small>
-        </div>
-      </div>
-
       <%= form_with model: [:admin, @user], url: admin_user_path(@user), method: :patch, local: true do |f| %>
         <div class="row">
           <div class="col-12 col-md-6 mb-3">
+            <%= f.label :first_name, class: "form-label" %>
+            <%= f.text_field :first_name, class: "form-control", placeholder: "First name" %>
+          </div>
+          <div class="col-12 col-md-6 mb-3">
+            <%= f.label :last_name, class: "form-label" %>
+            <%= f.text_field :last_name, class: "form-control", placeholder: "Last name" %>
+          </div>
+
+          <div class="col-12 col-md-6 mb-3">
             <%= f.label :username, class: "form-label" %>
-            <%= f.text_field :username, class: "form-control", placeholder: "Enter username" %>
+            <%= f.text_field :username, class: "form-control", placeholder: "Username" %>
           </div>
 
           <div class="col-12 col-md-6 mb-3">
@@ -62,5 +64,5 @@
 </div>
 
 <style>
-  .bg-primary-subtle { background:#e7f1ff!important; color:#0d6efd!important; }
+  .bg-primary-subtle{ background:#e7f1ff!important; color:#0d6efd!important; }
 </style>

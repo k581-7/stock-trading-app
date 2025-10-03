@@ -1,7 +1,6 @@
 <div class="auth-bg d-flex align-items-center justify-content-center min-vh-100">
   <div class="auth-card shadow-lg rounded-4 p-4 p-md-5">
 
-    <!-- Brand -->
     <div class="text-center mb-3">
       <div class="d-inline-flex align-items-center gap-2">
         <i class="bi bi-person-plus text-accent fs-3"></i>
@@ -16,42 +15,40 @@
 
     <%= render "devise/shared/error_messages", resource: resource %>
 
-    <%# registration form %>
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
       <div class="mb-3">
+        <%= f.label :first_name, class: "form-label text-muted-1" %>
+        <%= f.text_field :first_name, autocomplete: "given-name",
+              class: "form-control bg-input text-white border-0",
+              placeholder: "First name", required: true %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :last_name, class: "form-label text-muted-1" %>
+        <%= f.text_field :last_name, autocomplete: "family-name",
+              class: "form-control bg-input text-white border-0",
+              placeholder: "Last name", required: true %>
+      </div>
+
+      <div class="mb-3">
         <%= f.label :username, class: "form-label text-muted-1" %>
-        <div class="input-group input-group-lg auth-input">
-          <%= f.text_field :username, autofocus: true, autocomplete: "username",
-                class: "form-control bg-input text-white border-0",
-                required: true %>
-          <span class="input-group-text bg-input text-muted-2 border-0">
-            <i class="bi bi-person"></i>
-          </span>
-        </div>
+        <%= f.text_field :username, autocomplete: "username",
+              class: "form-control bg-input text-white border-0",
+              placeholder: "Choose a username", required: true %>
       </div>
 
       <div class="mb-3">
         <%= f.label :email, class: "form-label text-muted-1" %>
-        <div class="input-group input-group-lg auth-input">
-          <%= f.email_field :email, autocomplete: "email",
-                class: "form-control bg-input text-white border-0",
-                required: true %>
-          <span class="input-group-text bg-input text-muted-2 border-0">
-            <i class="bi bi-envelope"></i>
-          </span>
-        </div>
+        <%= f.email_field :email, autocomplete: "email",
+              class: "form-control bg-input text-white border-0",
+              placeholder: "you@example.com", required: true %>
       </div>
 
       <div class="mb-3">
         <%= f.label :password, class: "form-label text-muted-1" %>
-        <div class="input-group input-group-lg auth-input">
-          <%= f.password_field :password, autocomplete: "new-password",
-                class: "form-control bg-input text-white border-0",
-                required: true %>
-          <span class="input-group-text bg-input text-muted-2 border-0">
-            <i class="bi bi-shield-lock"></i>
-          </span>
-        </div>
+        <%= f.password_field :password, autocomplete: "new-password",
+              class: "form-control bg-input text-white border-0",
+              placeholder: "Create a password", required: true %>
         <% if @minimum_password_length %>
           <small class="text-muted-2">At least <%= @minimum_password_length %> characters.</small>
         <% end %>
@@ -59,67 +56,30 @@
 
       <div class="mb-4">
         <%= f.label :password_confirmation, class: "form-label text-muted-1" %>
-        <div class="input-group input-group-lg auth-input">
-          <%= f.password_field :password_confirmation, autocomplete: "new-password",
-                class: "form-control bg-input text-white border-0",
-                required: true %>
-          <span class="input-group-text bg-input text-muted-2 border-0">
-            <i class="bi bi-shield-check"></i>
-          </span>
-        </div>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password",
+              class: "form-control bg-input text-white border-0",
+              placeholder: "Re-enter password", required: true %>
       </div>
 
       <div class="d-grid">
         <%= f.submit "Create Account", class: "btn btn-accent btn-lg fw-semibold" %>
       </div>
-    <% end %>
 
-    <div class="text-center mt-3">
-      <small class="text-muted-2">Already have an account?
-        <%= link_to "Log in", new_session_path(resource_name), class: "link-muted" %>
-      </small>
-    </div>
+      <div class="text-center mt-3">
+        <small class="text-muted-2">Already have an account?
+          <%= link_to "Log in", new_session_path(resource_name), class: "link-muted" %>
+        </small>
+      </div>
+    <% end %>
   </div>
 </div>
 
 <style>
-  :root{
-    --auth-bg:#0A1220;      /* page background (very dark navy) */
-    --auth-card:#101b2d;    /* card surface (slate/blue) */
-    --input:#15253b;        /* input fields */
-    --muted-1:#9fb2c8;      /* labels */
-    --muted-2:#6c7d95;      /* subtle text */
-    --accent:#ff0f7b;       /* CTA accent; swap to #22c55e for green */
-  }
-
-  .auth-bg{
-    background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,0.04), transparent 60%),
-      linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0) 40%),
-      var(--auth-bg);
-  }
-
-  .auth-card{
-    max-width: 520px; width:100%;
-    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--auth-card);
-    border: 1px solid rgba(255,255,255,.06);
-  }
-
-  .text-muted-1{ color: var(--muted-1)!important; }
-  .text-muted-2{ color: var(--muted-2)!important; }
-  .text-accent{ color: var(--accent)!important; }
-
-  .bg-input{ background-color: var(--input)!important; }
-  .auth-input .form-control::placeholder{ color:#8fa1b8; }
-  .auth-input .form-control:focus{ box-shadow: 0 0 0 .2rem rgba(255,15,123,.15); }
-
-  .btn-accent{
-    background: var(--accent); border:none; color:#fff;
-    transition: transform .05s ease, filter .2s ease;
-  }
-  .btn-accent:hover{ filter: brightness(1.06); }
-  .btn-accent:active{ transform: translateY(1px); }
-
-  .link-muted{ color:#36b6ff; text-decoration:none; }
-  .link-muted:hover{ text-decoration:underline; }
+  :root{ --auth-bg:#0A1220; --auth-card:#101b2d; --input:#15253b; --muted-1:#9fb2c8; --muted-2:#6c7d95; --accent:#ff0f7b; }
+  .auth-bg{ background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,0.04), transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0) 40%), var(--auth-bg); }
+  .auth-card{ max-width:520px; width:100%; background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--auth-card); border:1px solid rgba(255,255,255,.06); }
+  .text-muted-1{ color:var(--muted-1)!important; } .text-muted-2{ color:var(--muted-2)!important; }
+  .bg-input{ background-color:var(--input)!important; }
+  .btn-accent{ background:var(--accent); border:none; color:#fff; }
+  .link-muted{ color:#36b6ff; text-decoration:none; } .link-muted:hover{ text-decoration:underline; }
 </style>
