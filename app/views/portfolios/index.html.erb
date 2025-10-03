@@ -281,16 +281,22 @@
                 </div>
               </td>
               <td>
-                <%= form_with url: sell_portfolio_path(p), method: :post, local: true do |f| %>
-                  <div class="d-flex align-items-center gap-2">
-                    <!-- Input field for quantity -->
-                    <%= number_field_tag :quantity, 1, min: 1, max: p.quantity, class: "form-control form-control-sm dark-input", style: "width:70px;" %>
+                <% if current_user.broker_status == "broker_approved" %>
+                  <%= form_with url: sell_portfolio_path(p), method: :post, local: true do |f| %>
+                    <div class="d-flex align-items-center gap-2">
+                      <!-- Input field for quantity -->
+                      <%= number_field_tag :quantity, 1, min: 1, max: p.quantity, class: "form-control form-control-sm dark-input", style: "width:70px;" %>
 
-                    <!-- Sell button -->
-                    <%= f.button type: "submit", class: "btn btn-sm btn-warning d-flex align-items-center" do %>
-                      <i class="bi bi-currency-dollar me-1"></i> Sell
-                    <% end %>
-                  </div>
+                      <!-- Sell button -->
+                      <%= f.button type: "submit", class: "btn btn-sm btn-warning d-flex align-items-center" do %>
+                        <i class="bi bi-currency-dollar me-1"></i> Sell
+                      <% end %>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <button class="btn btn-sm btn-secondary d-flex align-items-center" disabled>
+                    <i class="bi bi-lock me-1"></i> Sell (Broker Only)
+                  </button>
                 <% end %>
               </td>
             </tr>
@@ -299,9 +305,11 @@
       </table>
     </div>
     <div class="broker-section">
-      <%= button_to apply_broker_user_path(current_user),
-          method: :patch, class: "broker-btn" do %>
-        <i class="bi bi-person-workspace"></i> Apply to be a Broker
+      <% if current_user.broker_status != "broker_approved" %>
+        <%= button_to apply_broker_user_path(current_user),
+            method: :patch, class: "broker-btn" do %>
+          <i class="bi bi-person-workspace"></i> Apply to be a Broker
+        <% end %>
       <% end %>
     </div>
   </div>
