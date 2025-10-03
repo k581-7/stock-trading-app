@@ -66,69 +66,66 @@
       </div>
     </div>
 
-    <!-- 📄 Transaction History -->
-    <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
-      <div class="card-header text-light fw-semibold" style="background-color: #1F2937;">
-        Wallet Activity (<%= @wallet_logs.count %>)
-      </div>
-      <div class="card-body">
-        <% @wallet_logs.each do |log| %>
-          <% type = log.transaction_type %>
-          <% is_deposit  = type == "deposit" %>
-          <% is_withdraw = type == "withdraw" %>
+  <!-- 📄 Transaction History -->
+<div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
+  <div class="card-header text-light fw-semibold" style="background-color: #1F2937;">
+    Wallet Activity (<%= @wallet_logs.count %>)
+  </div>
+  <div class="card-body">
+    <% @wallet_logs.each do |log| %>
+      <% type = log.transaction_type %>
 
-          <% icon_class =
-              case type
-              when "buy"      then "bi bi-arrow-up-circle-fill text-success"
-              when "sell"     then "bi bi-arrow-down-circle-fill text-danger"
-              when "deposit"  then "bi bi-arrow-up-circle-fill text-info"
-              when "withdraw" then "bi bi-arrow-down-circle-fill text-warning"
-              else "bi bi-question-circle-fill text-secondary"
-          end %>
+      <% icon_class = case type
+        when "buy"      then "bi bi-arrow-down-circle-fill text-danger"
+        when "sell"     then "bi bi-arrow-up-circle-fill text-success"
+        when "deposit"  then "bi bi-arrow-up-circle-fill text-info"
+        when "withdraw" then "bi bi-arrow-down-circle-fill text-warning"
+        else "bi bi-question-circle-fill text-secondary"
+      end %>
 
-          <% badge_class =
-              case type
-              when "deposit" then "bg-info text-white"
-              when "withdraw" then "bg-warning text-dark"
-              else "bg-secondary text-white"
-              end %>
+      <% badge_class = case type
+        when "deposit"  then "bg-info text-white"
+        when "withdraw" then "bg-warning text-dark"
+        when "buy"      then "bg-danger text-white"
+        when "sell"     then "bg-success text-white"
+        else "bg-secondary text-white"
+      end %>
 
-          <% amount_class = log.amount >= 0 ? "text-success" : "text-danger" %>
-          <% action_label =
-              case type
-              when "deposit" then "Deposited"
-              when "withdraw" then "Withdrawn"
-              else "Processed"
-              end %>
+      <% amount_class = %w[buy withdraw].include?(type) ? "text-danger" : "text-success" %>
+      <% show_minus = %w[buy withdraw].include?(type) %>
+      <% price_per_share = log.quantity.to_f > 0 ? log.amount / log.quantity : nil %>
 
-          <div class="mb-3 p-3 rounded" style="background-color:#374151;">
-            <div class="row align-items-center">
-              <!-- Left side -->
-              <div class="col-md-8 col-12">
-                <div class="d-flex align-items-center gap-2 mb-1">
-                  <i class="<%= icon_class %> fs-5"></i>
-                  <strong class="text-light text-uppercase"><%= type %></strong>
-                  <span class="badge <%= badge_class %> text-uppercase px-2 py-1"><%= type %></span>
-                </div>
-                <div class="text-secondary">
-                  <%= log.created_at.in_time_zone("Asia/Manila").strftime("%b %d, %Y %I:%M %p") %><br>
-                  <%= "#{type.capitalize} of #{number_to_currency(log.amount)} via bank transfer" %>
-                </div>
-              </div>
+      <div class="mb-3 p-3 rounded" style="background-color:#374151;">
+        <div class="row align-items-center">
+          <!-- Left side -->
+          <div class="col-md-8 col-12">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <i class="<%= icon_class %> fs-5"></i>
+              <strong class="text-light text-uppercase"><%= type %></strong>
+              <span class="badge <%= badge_class %> text-uppercase px-2 py-1"><%= type %></span>
+            </div>
+            <div class="text-secondary">
+              <%= log.created_at.in_time_zone("Asia/Manila").strftime("%b %d, %Y %I:%M %p") %><br>
 
-              <!-- Right side -->
-              <div class="col-md-4 col-12 text-md-end mt-3 mt-md-0">
-                <div class="<%= amount_class %> fw-semibold">
-                  <%= log.amount >= 0 ? '+' : '-' %><%= number_to_currency(log.amount.abs) %>
-                </div>
-                <small class="text-muted d-block">Action: <%= type %></small>
-                <small class="text-secondary d-block">Balance: <%= number_to_currency(log.wallet&.balance || 0) %></small>
-              </div>
+              <% if %w[buy sell].include?(type) && log.stock.present? %>
+                <%= "#{type.upcase} #{log.stock.symbol} — #{log.quantity.to_f} shares @ #{number_to_currency(price_per_share)}" %><br>
+                <%= "Total: #{number_to_currency(log.amount)}" %>
+              <% else %>
+                <%= "#{type.capitalize} of #{number_to_currency(log.amount)} via bank transfer" %>
+              <% end %>
             </div>
           </div>
-        <% end %>
-      </div>
-    </div>
 
+          <!-- Right side -->
+          <div class="col-md-4 col-12 text-md-end mt-3 mt-md-0">
+            <div class="<%= amount_class %> fw-semibold">
+              <%= show_minus ? '-' : '+' %><%= number_to_currency(log.amount.abs) %>
+            </div>
+            <small class="text-muted d-block">Action: <%= type %></small>
+            <small class="text-secondary d-block">Balance: <%= number_to_currency(log.wallet&.balance || 0) %></small>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
