@@ -1,8 +1,8 @@
 class PortfoliosController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_portfolio, only: [:show, :edit, :update, :destroy, :sell]
-  before_action :authorize_portfolio, only: [:show, :edit, :update, :destroy, :sell]
-  
+  before_action :set_portfolio, only: [ :show, :edit, :update, :destroy, :sell ]
+  before_action :authorize_portfolio, only: [ :show, :edit, :update, :destroy, :sell ]
+
   def index
     @portfolios = current_user.portfolios.includes(:stock)
     @user = current_user
@@ -67,7 +67,7 @@ class PortfoliosController < ApplicationController
       # delete portfolio row if ubos na
       @portfolio.destroy if @portfolio.quantity <= 0
 
-      # update wallet balance (example: kung may wallet model ka)
+       # update wallet balance (example: kung may wallet model ka)
        wallet = current_user.wallet || current_user.create_wallet!(balance: 0)
     wallet.increment!(:balance, sell_value)
 
@@ -98,7 +98,7 @@ class PortfoliosController < ApplicationController
       redirect_to portfolios_path, alert: "Not authorized"
     end
   end
-  
+
   def portfolio_params
     params.require(:portfolio).permit(:stock_id, :quantity)
   end
