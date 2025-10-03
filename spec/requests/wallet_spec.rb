@@ -1,42 +1,91 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.describe "Trades (buy)", type: :request do
-  def create_user_with_wallet!(balance: 0)
-    user = User.create!(
-      email: "buyer#{SecureRandom.hex(2)}@ex.com",
-      username: "buyer_#{SecureRandom.hex(2)}",
-      password: "Password1!",
-      confirmed_at: Time.current,
-      approved: true
+RSpec.describe "Wallets", type: :request do
+  include Devise::Test::IntegrationHelpers
+
+  let!(:user) do
+    User.create!(
+      username: "testuser",
+      email: "test@example.com",
+      password: "password123",
+      password_confirmation: "password123"
     )
-    user.wallet.update!(balance: balance)
-    user
   end
 
-  it "reduces wallet, creates trade log, and updates portfolio" do
-    stock = Stock.create!(symbol: "AAPL", name: "Apple Inc.", current_price: 150)
-    user  = create_user_with_wallet!(balance: 1000)
-    sign_in user
-
-    post buy_trade_path, params: { stock_id: stock.id, shares: 3 }
-
-    expect(response).to have_http_status(:ok)
-    expect(user.wallet.reload.balance.to_d).to eq(550.to_d)
-    expect(TradeLog.where(user: user, transaction_type: "buy").count).to eq(1)
-    expect(Portfolio.where(user: user, stock: stock).exists?).to be true
-    expect(Portfolio.find_by(user: user, stock: stock).quantity.to_i).to eq(3)
+  let!(:wallet) do
+    Wallet.create!(
+      user: user,
+      balance: 1000
+    )
   end
 
-  it "rejects when wallet has insufficient funds" do
-    stock = Stock.create!(symbol: "TSLA", name: "Tesla Inc.", current_price: 300)
-    user  = create_user_with_wallet!(balance: 100)
+  before do
     sign_in user
+  end
 
-    post buy_trade_path, params: { stock_id: stock.id, shares: 1 }
+  describe "GET /wallet" do
+    it "shows wallet and logs" do
+      TradeLog.create!(user: user, wallet: wallet, transaction_type: "buy", amount: 100, quantity: 1)
+      TradeLog.create!(user: user, wallet: wallet, transaction_type: "deposit", amount: 200, quantity: 0)
 
-    expect(response).to have_http_status(:unprocessable_content)
-    expect(user.wallet.reload.balance.to_d).to eq(100.to_d)
-    expect(TradeLog.where(user: user, transaction_type: "buy").count).to eq(0)
-    expect(Portfolio.where(user: user, stock: stock).exists?).to be false
+      get wallet_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Wallet")
+      expect(response.body).to include("buy")
+      expect(response.body).to include("deposit")
+    end
+
+    it "shows empty logs if wallet is missing" do
+      wallet.destroy
+      get wallet_path
+      expect(response.body).to include("Wallet")
+    end
+  end
+
+  describe "POST /wallet/top_up" do
+    it "adds funds and creates deposit log" do
+      expect {
+        post top_up_wallets_path, params: { amount: 500 }
+      }.to change { wallet.reload.balance }.by(500)
+       .and change { TradeLog.count }.by(1)
+
+      expect(response).to redirect_to(wallet_path)
+      follow_redirect!
+      expect(response.body).to include("Added")
+    end
+
+    it "rejects invalid amount" do
+      expect {
+        post top_up_wallets_path, params: { amount: 0 }
+      }.not_to change { wallet.reload.balance }
+
+      expect(response).to redirect_to(wallet_path)
+      follow_redirect!
+      expect(response.body).to include("Enter a valid amount")
+    end
+  end
+
+  describe "POST /wallet/withdraw" do
+    it "withdraws funds and creates log" do
+      expect {
+        post withdraw_wallets_path, params: { amount: 300 }
+      }.to change { wallet.reload.balance }.by(-300)
+       .and change { TradeLog.count }.by(1)
+
+      expect(response).to redirect_to(wallet_path)
+      follow_redirect!
+      expect(response.body).to include("Withdrew")
+    end
+
+    it "rejects invalid or excessive amount" do
+      expect {
+        post withdraw_wallets_path, params: { amount: 2000 }
+      }.not_to change { wallet.reload.balance }
+
+      expect(response).to redirect_to(wallet_path)
+      follow_redirect!
+      expect(response.body).to include("Invalid amount or insufficient balance")
+    end
   end
 end
