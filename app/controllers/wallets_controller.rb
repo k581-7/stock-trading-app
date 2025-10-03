@@ -7,7 +7,7 @@ def show
 
   # Make sure @wallet exists before querying
   if @wallet
-    @wallet_logs = TradeLog.where(wallet: @wallet).order(created_at: :desc)
+    @wallet_logs = TradeLog.where(wallet: @wallet, transaction_type: %w[deposit withdraw sell buy]).order(created_at: :desc)
   else
     @wallet_logs = []
   end
