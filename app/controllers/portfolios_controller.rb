@@ -1,7 +1,7 @@
 class PortfoliosController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_portfolio, only: [ :show, :edit, :update, :destroy ]
-  before_action :authorize_portfolio, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_portfolio, only: [:show, :edit, :update, :destroy, :sell]
+  before_action :authorize_portfolio, only: [:show, :edit, :update, :destroy, :sell]
 
   def index
     @portfolios = current_user.portfolios.includes(:stock)
@@ -52,29 +52,39 @@ class PortfoliosController < ApplicationController
   end
 
   def sell
-    @portfolio = Portfolio.find(params[:id])
     @stock = @portfolio.stock
-
     sell_quantity = params[:quantity].to_i
-    sell_quantity = @portfolio.quantity if sell_quantity <= 0 # fallback, sell all
+    sell_quantity = @portfolio.quantity if sell_quantity <= 0 # fallback: sell all
 
     if sell_quantity > 0 && sell_quantity <= @portfolio.quantity
       sell_value = @stock.current_price.to_f * sell_quantity
 
-      # update portfolio quantity
-      @portfolio.update(quantity: @portfolio.quantity - sell_quantity)
+      ActiveRecord::Base.transaction do
+        # Update portfolio quantity
+        @portfolio.update!(quantity: @portfolio.quantity - sell_quantity)
 
-      # delete portfolio row if ubos na
-      @portfolio.destroy if @portfolio.quantity <= 0
+        # Delete portfolio row if empty
+        @portfolio.destroy if @portfolio.quantity <= 0
 
-      # update wallet balance (example: kung may wallet model ka)
-      current_user.wallet.increment!(:balance, sell_value)
+        # Update wallet balance
+        current_user.wallet.increment!(:balance, sell_value)
 
-      redirect_to portfolios_path, notice: "Sold #{sell_quantity} shares of #{@stock.symbol} for #{sell_value}."
+        # Create trade log
+        TradeLog.create!(
+          user: current_user,
+          stock: @stock,
+          wallet: current_user.wallet,
+          transaction_type: "sell",
+          quantity: sell_quantity,
+          amount: sell_value
+        )
+      end
+
+      redirect_to portfolios_path, notice: "Sold #{sell_quantity} shares of #{@stock.symbol} for #{helpers.number_to_currency(sell_value)}."
     else
       redirect_to portfolios_path, alert: "Invalid sell quantity."
     end
-end
+  end
 
   private
 
