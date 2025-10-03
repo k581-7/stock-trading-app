@@ -8,19 +8,22 @@ RSpec.describe "Wallets", type: :request do
       username: "testuser",
       email: "test@example.com",
       password: "password123",
-      password_confirmation: "password123"
+      password_confirmation: "password123",
+      first_name: "Test",
+      last_name: "User",
+      broker_status: "broker_approved"
     )
   end
 
   let!(:wallet) do
-    Wallet.create!(
-      user: user,
-      balance: 1000
-    )
+    Wallet.find_or_create_by!(user: user) do |w|
+      w.balance = 1000
+    end
   end
 
   before do
-    sign_in user
+    user.confirm
+    sign_in user  
   end
 
   describe "GET /wallet" do
@@ -46,7 +49,7 @@ RSpec.describe "Wallets", type: :request do
   describe "POST /wallet/top_up" do
     it "adds funds and creates deposit log" do
       expect {
-        post top_up_wallets_path, params: { amount: 500 }
+        post top_up_wallet_path, params: { amount: 500 }
       }.to change { wallet.reload.balance }.by(500)
        .and change { TradeLog.count }.by(1)
 
@@ -57,7 +60,7 @@ RSpec.describe "Wallets", type: :request do
 
     it "rejects invalid amount" do
       expect {
-        post top_up_wallets_path, params: { amount: 0 }
+        post top_up_wallet_path, params: { amount: 0 }
       }.not_to change { wallet.reload.balance }
 
       expect(response).to redirect_to(wallet_path)
@@ -69,8 +72,8 @@ RSpec.describe "Wallets", type: :request do
   describe "POST /wallet/withdraw" do
     it "withdraws funds and creates log" do
       expect {
-        post withdraw_wallets_path, params: { amount: 300 }
-      }.to change { wallet.reload.balance }.by(-300)
+        post withdraw_wallet_path, params: { amount: 300 }
+      }.to change { wallet.reload.balance }.by(-300.to_d)
        .and change { TradeLog.count }.by(1)
 
       expect(response).to redirect_to(wallet_path)
@@ -80,7 +83,7 @@ RSpec.describe "Wallets", type: :request do
 
     it "rejects invalid or excessive amount" do
       expect {
-        post withdraw_wallets_path, params: { amount: 2000 }
+        post withdraw_wallet_path, params: { amount: 2000 }
       }.not_to change { wallet.reload.balance }
 
       expect(response).to redirect_to(wallet_path)

@@ -9,6 +9,8 @@ RSpec.describe "Portfolios", type: :request do
       email: "user@example.com",
       password: "password",
       password_confirmation: "password",
+      first_name: "Test",
+      last_name: "User",
       role: :trader,
       approved: true
     )
