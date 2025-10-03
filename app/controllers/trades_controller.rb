@@ -9,18 +9,26 @@ class TradesController < ApplicationController
   end
   def buy
     stock  = Stock.find(params[:stock_id])
-    shares = BigDecimal(params[:shares].to_s)
-    price  = BigDecimal(stock.current_price.to_s)
+    shares = params[:shares].to_i
+    price  = stock.current_price.to_d
     cost   = shares * price
-    return head :unprocessable_content if shares <= 0
+
+    if shares <= 0
+      return redirect_to new_trade_path, alert: "Invalid number of shares."
+    end
+
     wallet = current_user.wallet || current_user.create_wallet!(balance: 0)
-    return head :unprocessable_content if wallet.balance < cost
+    if wallet.balance < cost
+      return redirect_to new_trade_path, alert: "Insufficient wallet balance."
+    end
+
     ActiveRecord::Base.transaction do
       wallet.update!(balance: wallet.balance - cost)
-      portfolio = Portfolio.find_or_create_by!(user: current_user, stock: stock) do |p|
-        p.quantity = 0
-      end
-      portfolio.update!(quantity: portfolio.quantity + shares)
+
+      portfolio = current_user.portfolios.find_or_initialize_by(stock: stock)
+      portfolio.quantity = (portfolio.quantity || 0) + shares
+      portfolio.save!
+
       TradeLog.create!(
         user: current_user,
         stock: stock,
@@ -30,7 +38,8 @@ class TradesController < ApplicationController
         amount: cost
       )
     end
-    head :ok
+
+    redirect_to portfolios_path, notice: "Successfully bought #{shares} share(s) of #{stock.symbol}"
   end
   def sell
     stock  = Stock.find(params[:stock_id])

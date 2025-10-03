@@ -206,7 +206,6 @@
         </thead>
         <tbody>
           <% @portfolios.each do |p| %>
-            <% next unless p.stock %>
             <% live_price = p.stock.current_price.to_f %>
             <% market_value = live_price * p.quantity.to_f %>
             <% last_updated = p.stock.last_updated_at || p.stock.updated_at %>
