@@ -42,7 +42,7 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
 after_booted do
   Rails.application.config.after_initialize do
-    UpdateStockPricesJob.perform_later
+    UpdateStockPricesJob.perform_now
     # UpdateDailyMarketCapJob.perform_now
   end
 end

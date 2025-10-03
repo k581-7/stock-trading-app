@@ -4,7 +4,6 @@ Rails.application.routes.draw do
     registrations: "users/registrations"
   }
   root "dashboard#index"
-
   # --- Trader routes ---
   # Portfolio (optionally with :stock_id param)
   resources :portfolios do
@@ -12,28 +11,21 @@ Rails.application.routes.draw do
       post :sell
     end
   end
-
   # --- Stocks routes ---
   resources :stocks do
     collection do
       post :update_prices
     end
   end
-
   # dashboard
   get "dashboard", to: "dashboard#index"
-
   # Transactions
   get "/transactions", to: "transactions#index", as: :transactions
-
   # Trades (form + buy/sell actions)
   get  "/trades/new", to: "trades#new",  as: :new_trade
   post "/trades/buy", to: "trades#buy",  as: :buy_trade
   post "/trades/sell", to: "trades#sell", as: :sell_trade
-
-
   get "/trade_logs", to: "trade_logs#index", as: :trade_logs
-
   # Wallet routes
   get "/wallet",        to: "wallets#show",   as: :wallet
   post "/wallet/top_up", to: "wallets#top_up", as: :top_up_wallet
@@ -44,18 +36,15 @@ Rails.application.routes.draw do
       patch :apply_broker
     end
   end
-
   # --- Admin routes ---
   namespace :admin do
     resources :transactions, only: :index
-
     resources :users do
       collection do
         get :index
         get :pending_approvals
         get :all_users
       end
-
       member do
         patch :approve
         patch :revoke
@@ -65,11 +54,17 @@ Rails.application.routes.draw do
       end
     end
   end
-
   get "test_quote", to: "stocks#test_quote"
   post "stocks/update_prices", to: "stocks#update_prices", as: :update_prices
-
-
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end
+
+
+
+
+
+
+
+
+

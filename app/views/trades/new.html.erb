@@ -1,6 +1,5 @@
 <div class="container-fluid trader-dashboard-bg">
   <div class="container py-4" style="max-width: 1300px;">
-
     <!-- Header -->
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
@@ -16,7 +15,6 @@
         <span class="status-dot <%= market_open ? 'bg-success' : 'bg-secondary' %>"></span>
       </div>
     </div>
-
     <!-- Gainers / Losers -->
     <div class="row g-4 mb-4">
       <!-- Top Gainers -->
@@ -36,7 +34,6 @@
           </div>
         </div>
       </div>
-
       <!-- Top Losers -->
       <div class="col-lg-6">
         <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
@@ -55,7 +52,6 @@
         </div>
       </div>
     </div>
-
     <!-- Available Stocks -->
     <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
       <div class="card-header d-flex justify-content-between align-items-center text-light fw-semibold py-3 px-4" style="background-color: #1F2937; border-color: #1F2937;">
@@ -64,7 +60,6 @@
         </span>
         <small class="text-secondary"><%= @stocks.size %> stocks available</small>
       </div>
-
       <div class="px-4 pb-3">
         <% @stocks.each do |stock| %>
           <% price        = stock.current_price.to_f %>
@@ -75,10 +70,8 @@
           <% trend_icon   = up ? 'bi-graph-up-arrow' : 'bi-graph-down-arrow' %>
           <% trend_class  = up ? 'text-success' : 'text-danger' %>
           <% market_class = stock.market_open ? 'text-success' : 'text-secondary' %>
-
           <div class="text-light px-4 py-3 mb-3" style="background-color: #111827; border-radius: 0.5rem;">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-
               <!-- Symbol + Company -->
               <div class="d-flex align-items-center gap-3">
                 <div class="as-symbol"><%= stock.symbol %></div>
@@ -89,7 +82,6 @@
                   </small>
                 </div>
               </div>
-
               <!-- Price Info -->
               <div class="d-flex align-items-center flex-wrap gap-4 ms-auto me-3">
                 <div class="text-end">
@@ -123,7 +115,6 @@
                   </div>
                 </div>
               </div>
-
               <!-- Buy Button -->
               <div class="d-flex align-items-center">
                 <%= form_with url: buy_trade_path, method: :post, class: "d-inline", local: true do %>
@@ -134,7 +125,6 @@
                   </button>
                 <% end %>
               </div>
-
             </div>
           </div>
         <% end %>
