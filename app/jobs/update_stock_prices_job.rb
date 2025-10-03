@@ -11,7 +11,6 @@ class UpdateStockPricesJob < ApplicationJob
 
     client = FinnhubRuby::DefaultApi.new
       Stock.find_each do |stock|
-
       begin
         quote = client.quote(stock.symbol)
 
