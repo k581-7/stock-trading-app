@@ -31,10 +31,10 @@
     <%= render "shared/navbar" %>
     <% end %>
     <!-- :bell: Flash Messages -->
-    <% if notice %>
+    <% if notice.present? %>
       <div class="alert alert-success text-center"><%= notice %></div>
     <% end %>
-    <% if alert %>
+    <% if alert.present? %>
       <div class="alert alert-danger text-center"><%= alert %></div>
     <% end %>
     <!-- :page_facing_up: Page Content -->
