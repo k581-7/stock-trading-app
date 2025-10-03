@@ -35,24 +35,21 @@ end
   end
 
   def withdraw
-    amount = params[:amount].to_d
-    current_user.ensure_wallet!
-    wallet = current_user.wallet
+  amount = params[:amount].to_d
+  wallet = current_user.wallet
 
-    if amount > 0 && wallet.balance >= amount
-      wallet.update!(balance: wallet.balance - amount)
-
-      TradeLog.create!(
-        user: current_user,
-        wallet: wallet,
-        transaction_type: "withdraw",
-        amount: amount,
-        quantity: 0
-      )
-
-      redirect_to wallet_path, notice: "Withdrew #{helpers.number_to_currency(amount)} from wallet."
-    else
-      redirect_to wallet_path, alert: "Invalid amount or insufficient balance."
-    end
+  if amount > 0 && wallet.balance >= amount
+    wallet.update!(balance: wallet.balance - amount)
+    TradeLog.create!(
+      user: current_user,
+      wallet: wallet,
+      transaction_type: "withdraw",
+      amount: amount,
+      quantity: 0
+    )
+    redirect_to wallet_path, notice: "Successfully withdrew"
+  else
+    redirect_to wallet_path, alert: "Invalid amount or insufficient balance"
   end
+end
 end

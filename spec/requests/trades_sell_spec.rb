@@ -1,15 +1,22 @@
 require "rails_helper"
 
 RSpec.describe "Trades (sell)", type: :request do
+  include Devise::Test::IntegrationHelpers
+
   def create_user_with_wallet!(balance: 0, approved: true)
     user = User.create!(
       email: "seller#{SecureRandom.hex(2)}@ex.com",
       username: "seller_#{SecureRandom.hex(2)}",
       password: "Password1!",
-      confirmed_at: Time.current,
-      approved: approved
+      password_confirmation: "Password1!",
+      first_name: "Seller",
+      last_name:  "Test",
+      approved: approved,          
+      confirmed_at: Time.current
+
     )
-    user.wallet.update!(balance: balance)
+    wallet = Wallet.find_or_create_by!(user: user) { |w| w.balance = 0 }
+    wallet.update!(balance: balance)
     user
   end
 
@@ -22,9 +29,9 @@ RSpec.describe "Trades (sell)", type: :request do
     post sell_trade_path, params: { stock_id: stock.id, shares: 2 }
 
     expect(response).to redirect_to(trade_logs_path)
-    expect(user.wallet.reload.balance.to_d).to eq(410.to_d) # 100 + (2 * 155)
+    expect(user.wallet.reload.balance.to_d).to eq(410.to_d)
 
-    log = TradeLog.order(:created_at).last
+    log = TradeLog.where(wallet: user.wallet).order(:created_at).last
     expect(log.transaction_type).to eq("sell")
     expect(log.amount.to_d).to eq(310.to_d)
     expect(log.quantity.to_d).to eq(2.to_d)
@@ -43,7 +50,7 @@ RSpec.describe "Trades (sell)", type: :request do
 
     expect(response).to redirect_to(new_trade_path)
     expect(user.wallet.reload.balance.to_d).to eq(50.to_d)
-    expect(TradeLog.where(transaction_type: "sell").count).to eq(0)
+    expect(TradeLog.where(transaction_type: "sell", wallet: user.wallet).count).to eq(0)
     expect(Portfolio.find_by(user: user, stock: stock).quantity.to_d).to eq(1.to_d)
   end
 
@@ -59,7 +66,7 @@ RSpec.describe "Trades (sell)", type: :request do
     follow_redirect!
     expect(response.body).to include("Your account must be approved to sell stocks.")
     expect(user.wallet.reload.balance.to_d).to eq(500.to_d)
-    expect(TradeLog.where(transaction_type: "sell").count).to eq(0)
+    expect(TradeLog.where(transaction_type: "sell", wallet: user.wallet).count).to eq(0)
     expect(Portfolio.find_by(user: user, stock: stock).quantity.to_d).to eq(3.to_d)
   end
 end
