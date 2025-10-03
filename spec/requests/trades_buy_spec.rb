@@ -1,4 +1,3 @@
-# spec/requests/trades_buy_spec.rb
 require "rails_helper"
 
 RSpec.describe "Trades (buy)", type: :request do
@@ -7,38 +6,56 @@ RSpec.describe "Trades (buy)", type: :request do
       email: "buyer#{SecureRandom.hex(2)}@ex.com",
       username: "buyer_#{SecureRandom.hex(2)}",
       password: "Password1!",
-      password_confirmation: "Password1!",
       confirmed_at: Time.current
     )
     user.wallet.update!(balance: balance)
     user
   end
 
-  it "reduces wallet, creates trade log, and updates portfolio" do
-    stock = Stock.create!(symbol: "AAPL", name: "Apple Inc.", current_price: 150)
+  it "POST /trades/buy decreases wallet, creates trade log, and increases portfolio" do
+    stock = Stock.create!(name: "Apple", symbol: "AAPL", current_price: 155.0)
     user  = create_user_with_wallet!(balance: 1000)
     sign_in user
 
-    expect {
-      post buy_trade_path, params: { stock_id: stock.id, shares: 3 }
-    }.to change { user.wallet.reload.balance }.from(1000).to(550)
-     .and change { TradeLog.where(user: user, transaction_type: "buy").count }.by(1)
-     .and change { Portfolio.where(user_id: user.id, stock_id: stock.id).exists? }.from(false).to(true)
+    post buy_trade_path, params: { stock_id: stock.id, shares: 2 }
 
-    expect(response).to have_http_status(:ok)
-    expect(Portfolio.find_by(user_id: user.id, stock_id: stock.id).quantity.to_i).to eq(3)
+    expect(response).to redirect_to(portfolios_path)
+    expect(user.wallet.reload.balance.to_d).to eq(690.to_d) # 1000 - (2 * 155)
+
+    log = TradeLog.order(:created_at).last
+    expect(log.transaction_type).to eq("buy")
+    expect(log.amount.to_d).to eq(310.to_d)
+    expect(log.quantity.to_d).to eq(2.to_d)
+
+    pf = Portfolio.find_by(user: user, stock: stock)
+    expect(pf.quantity.to_d).to eq(2.to_d)
   end
 
-  it "rejects when wallet has insufficient funds" do
-    stock = Stock.create!(symbol: "TSLA", name: "Tesla Inc.", current_price: 300)
+  it "rejects when buying more than wallet balance allows" do
+    stock = Stock.create!(name: "Tesla", symbol: "TSLA", current_price: 150.0)
     user  = create_user_with_wallet!(balance: 100)
     sign_in user
 
-    post buy_trade_path, params: { stock_id: stock.id, shares: 1 }
+    post buy_trade_path, params: { stock_id: stock.id, shares: 2 }
 
-    expect(response).to have_http_status(:unprocessable_content)
-    expect(user.wallet.reload.balance).to eq(100)
-    expect(TradeLog.where(user: user, transaction_type: "buy").count).to eq(0)
-    expect(Portfolio.where(user: user, stock: stock).exists?).to be false
+    expect(response).to redirect_to(new_trade_path)
+    expect(user.wallet.reload.balance.to_d).to eq(100.to_d)
+    expect(TradeLog.where(transaction_type: "buy").count).to eq(0)
+    expect(Portfolio.find_by(user: user, stock: stock)).to be_nil
+  end
+
+  it "rejects when buying with invalid share count" do
+    stock = Stock.create!(name: "Netflix", symbol: "NFLX", current_price: 120.0)
+    user  = create_user_with_wallet!(balance: 500)
+    sign_in user
+
+    post buy_trade_path, params: { stock_id: stock.id, shares: 0 }
+
+    expect(response).to redirect_to(new_trade_path)
+    follow_redirect!
+    expect(response.body).to include("Invalid number of shares.")
+    expect(user.wallet.reload.balance.to_d).to eq(500.to_d)
+    expect(TradeLog.where(transaction_type: "buy").count).to eq(0)
+    expect(Portfolio.find_by(user: user, stock: stock)).to be_nil
   end
 end
