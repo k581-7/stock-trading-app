@@ -1,134 +1,201 @@
-<div class="container-fluid trader-dashboard-bg">
-  <div class="container py-4" style="max-width: 1300px;">
+<%# <meta http-equiv="refresh" content="15"> %>
+<style>
+  /* Base (same look as your portfolio page) */
+  .portfolio-dashboard{background:#0A0F1E;min-height:100vh;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+  .portfolio-subtitle,.text-mutedish{color:#6B7280}
+  .page-title{display:flex;align-items:center;gap:1rem}
+
+  /* Cards / Sections */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+  .stat-card,.holdings-section{background:linear-gradient(135deg,#1E293B 0%,#0F172A 100%);border-radius:1rem;border:1px solid #1E293B;position:relative;overflow:hidden}
+  .stat-card{padding:1.25rem 1.5rem}
+  .holdings-section{padding:1.5rem}
+  /* REMOVE glow */
+  .stat-card::before{content:none}
+  .stat-label{color:#94A3B8;font-weight:500;margin-bottom:.35rem}
+  .stat-value{font-weight:700;font-size:1.35rem}
+  .stat-change{color:#6B7280;font-size:.9rem}
+  .stat-icon{position:absolute;top:1.25rem;right:1.25rem;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem}
+  .icon-blue{background:rgba(59,130,246,.15);color:#3B82F6}
+  .icon-green{background:rgba(34,197,94,.15);color:#22C55E}
+
+  .positive{color:#22C55E}
+  .negative{color:#EF4444}
+  .text-highlight-blue{color:#3B82F6}
+
+  /* Gainers/Losers list rows */
+  .mini-list{display:flex;flex-direction:column;gap:.5rem}
+  .mini-row{display:grid;grid-template-columns:120px 1fr auto;align-items:center;gap:1rem;background:#0F172A;border:1px solid #1E293B;border-radius:.5rem;padding:.75rem 1rem;transition:background .2s}
+  .mini-row:hover{background:#1E293B}
+  .mini-symbol{display:inline-block;background:#111827;color:#fff;font-weight:700;padding:.35rem .75rem;border-radius:.375rem;font-size:.85rem}
+  .mini-price{color:#94A3B8}
+
+  /* Available Stocks rows (table-like) */
+  .as-row{display:grid;grid-template-columns:220px repeat(4,1fr) 140px 220px;gap:1rem;background:#0F172A;border:1px solid #1E293B;border-radius:.5rem;padding:1rem;align-items:center;transition:background .2s}
+  .as-row:hover{background:#1E293B}
+  .as-symbol{display:inline-block;background:#111827;color:#fff;font-weight:700;padding:.35rem .75rem;border-radius:.375rem;font-size:.9rem}
+  .as-meta small{color:#6B7280}
+  .as-col{text-align:right}
+  .status-wrap{display:flex;align-items:center;justify-content:flex-end;gap:.5rem}
+  .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+  .bg-success{background:#22C55E}
+  .bg-secondary{background:#6B7280}
+
+  /* Buttons / form */
+  .buy-form{display:flex;align-items:center;gap:.5rem;justify-content:flex-end}
+  .qty-input{width:120px;background:#0B1220;border:1px solid #1E293B;color:#fff;border-radius:.375rem;padding:.375rem .5rem}
+  .qty-input:focus{outline:none;border-color:#3B82F6}
+  .buy-btn{background:#059669;color:#fff;border:none;border-radius:.5rem;padding:.5rem 1rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;cursor:pointer;transition:background .2s}
+  .buy-btn:hover{background:#047857}
+</style>
+
+<div class="portfolio-dashboard container-fluid">
+  <div class="container py-4" style="max-width:1300px;">
+
     <!-- Header -->
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-      <div>
-        <h3 class="mb-0 fw-bold text-light">Stock Trading</h3>
-        <small class="text-secondary">Buy stocks to build your portfolio</small>
+      <div class="page-title">
+        <i class="bi bi-briefcase-fill" style="font-size:2rem;"></i>
+        <div>
+          <h1 class="fs-4 fw-bold m-0">Stock Trading</h1>
+          <p class="portfolio-subtitle mb-0">Buy stocks to build your portfolio</p>
+        </div>
       </div>
+
       <div class="d-flex align-items-center gap-2 mt-3 mt-sm-0">
-        <span class="text-secondary">Market Status:</span>
+        <span class="portfolio-subtitle">Market Status:</span>
         <% market_open = @stocks.any?(&:market_open) %>
-        <span class="<%= market_open ? 'text-success' : 'text-muted' %> fw-semibold">
+        <span class="<%= market_open ? 'positive' : 'text-mutedish' %> fw-semibold">
           <%= market_open ? 'Open' : 'Closed' %>
         </span>
         <span class="status-dot <%= market_open ? 'bg-success' : 'bg-secondary' %>"></span>
       </div>
     </div>
+
     <!-- Gainers / Losers -->
-    <div class="row g-4 mb-4">
+    <div class="stats-grid mb-4">
       <!-- Top Gainers -->
-      <div class="col-lg-6">
-        <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
-          <div class="card-header text-light fw-semibold py-3 px-4" style="background-color: #1F2937; border-color: #1F2937;">
-            <i class="bi bi-graph-up-arrow text-success me-2"></i> Top Gainers Today
-          </div>
-          <div class="card-body px-4 pb-3">
-            <% @top_gainers.each do |s| %>
-              <div class="d-flex justify-content-between align-items-center py-3 px-3 rounded mb-2" style="background-color: #111827;">
-                <div class="fw-bold text-white"><%= s.symbol %></div>
-                <div class="text-secondary"><%= number_to_currency(s.current_price) %></div>
-                <div class="text-success fw-semibold">+<%= number_with_precision(s.percent_change, precision: 2) %>%</div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="bi bi-graph-up-arrow positive me-2"></i> Top Gainers Today</div>
+        <div class="mini-list">
+          <% @top_gainers.each do |s| %>
+            <div class="mini-row">
+              <div class="mini-symbol"><%= s.symbol %></div>
+              <div class="mini-price"><%= s.name %></div>
+              <div class="as-col">
+                <span class="mini-price me-2"><%= number_to_currency(s.current_price) %></span>
+                <span class="positive fw-semibold">+<%= number_with_precision(s.percent_change, precision: 2) %>%</span>
               </div>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </div>
       </div>
+
       <!-- Top Losers -->
-      <div class="col-lg-6">
-        <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
-          <div class="card-header text-light fw-semibold py-3 px-4" style="background-color: #1F2937; border-color: #1F2937;">
-            <i class="bi bi-graph-down-arrow text-danger me-2"></i> Top Losers Today
-          </div>
-          <div class="card-body px-4 pb-3">
-            <% @top_losers.each do |s| %>
-              <div class="d-flex justify-content-between align-items-center py-3 px-3 rounded mb-2" style="background-color: #111827;">
-                <div class="fw-bold text-white"><%= s.symbol %></div>
-                <div class="text-secondary"><%= number_to_currency(s.current_price) %></div>
-                <div class="text-danger fw-semibold"><%= number_with_precision(s.percent_change, precision: 2) %>%</div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="bi bi-graph-down-arrow negative me-2"></i> Top Losers Today</div>
+        <div class="mini-list">
+          <% @top_losers.each do |s| %>
+            <div class="mini-row">
+              <div class="mini-symbol"><%= s.symbol %></div>
+              <div class="mini-price"><%= s.name %></div>
+              <div class="as-col">
+                <span class="mini-price me-2"><%= number_to_currency(s.current_price) %></span>
+                <span class="negative fw-semibold"><%= number_with_precision(s.percent_change, precision: 2) %>%</span>
               </div>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
+
     <!-- Available Stocks -->
-    <div class="card shadow-sm" style="background-color: #1F2937; border-radius: 0.75rem;">
-      <div class="card-header d-flex justify-content-between align-items-center text-light fw-semibold py-3 px-4" style="background-color: #1F2937; border-color: #1F2937;">
-        <span class="d-flex align-items-center">
-          <i class="bi bi-currency-dollar me-2 text-info"></i> Available Stocks
-        </span>
-        <small class="text-secondary"><%= @stocks.size %> stocks available</small>
+    <div class="holdings-section">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+        <div>
+          <h2 class="fs-5 fw-semibold mb-1">
+            <i class="bi bi-currency-dollar me-1 text-highlight-blue"></i> Available Stocks
+          </h2>
+          <p class="portfolio-subtitle mb-0"><%= @stocks.size %> stocks available</p>
+        </div>
       </div>
-      <div class="px-4 pb-3">
+
+      <div class="d-flex flex-column gap-3">
         <% @stocks.each do |stock| %>
-          <% price        = stock.current_price.to_f %>
-          <% live_price   = stock.current_price.to_f %>
-          <% change       = stock.price_change.to_f %>
-          <% pct          = stock.percent_change.to_f %>
-          <% up           = change >= 0 %>
-          <% trend_icon   = up ? 'bi-graph-up-arrow' : 'bi-graph-down-arrow' %>
-          <% trend_class  = up ? 'text-success' : 'text-danger' %>
-          <% market_class = stock.market_open ? 'text-success' : 'text-secondary' %>
-          <div class="text-light px-4 py-3 mb-3" style="background-color: #111827; border-radius: 0.5rem;">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <!-- Symbol + Company -->
-              <div class="d-flex align-items-center gap-3">
-                <div class="as-symbol"><%= stock.symbol %></div>
-                <div class="d-flex flex-column">
-                  <div class="fw-semibold"><%= stock.name %></div>
-                  <small class="text-secondary">Last updated:
-                    <%= stock.last_updated_at.in_time_zone('Asia/Manila').strftime('%H:%M:%S') %>
-                  </small>
-                </div>
+          <% price       = stock.current_price.to_f %>
+          <% live_price  = stock.current_price.to_f %>
+          <% change      = stock.price_change.to_f %>
+          <% pct         = stock.percent_change.to_f %>
+          <% up          = change >= 0 %>
+          <% trend_icon  = up ? 'bi-graph-up-arrow' : 'bi-graph-down-arrow' %>
+          <% trend_class = up ? 'positive' : 'negative' %>
+          <% market_cls  = stock.market_open ? 'positive' : 'text-mutedish' %>
+          <div class="as-row">
+            <!-- Symbol + Company -->
+            <div>
+              <span class="as-symbol"><%= stock.symbol %></span>
+              <div class="as-meta mt-2">
+                <div class="fw-semibold"><%= stock.name %></div>
+                <small>
+                  Last updated:
+                  <% last_u = stock.last_updated_at || stock.updated_at %>
+                  <%= last_u ? last_u.in_time_zone('Asia/Manila').strftime('%b. %-d, %Y %I:%M%p') : 'N/A' %>
+                </small>
               </div>
-              <!-- Price Info -->
-              <div class="d-flex align-items-center flex-wrap gap-4 ms-auto me-3">
-                <div class="text-end">
-                  <small class="text-secondary d-block">Price</small>
-                  <div class="fs-6 fw-semibold"><%= number_to_currency(price) %></div>
-                </div>
-                <div class="text-end">
-                  <small class="text-secondary d-block">Current price</small>
-                  <div class="fs-6 fw-semibold"><%= number_to_currency(live_price) %></div>
-                  <div class="d-flex justify-content-end align-items-center gap-2 mt-1">
-                    <i class="bi <%= trend_icon %> <%= trend_class %>"></i>
-                    <small class="<%= trend_class %>"><%= up ? '+' : '' %><%= number_with_precision(pct, precision: 2) %>%</small>
-                  </div>
-                </div>
-                <div class="text-end">
-                  <small class="text-secondary d-block">Price change</small>
-                  <div class="<%= trend_class %> fw-semibold">
-                    <%= up ? '+' : '' %><%= number_with_precision(change, precision: 2) %>
-                  </div>
-                </div>
-                <div class="text-end">
-                  <small class="text-secondary d-block">% change</small>
-                  <div class="<%= trend_class %> fw-semibold">
-                    <%= up ? '+' : '' %><%= number_with_precision(pct, precision: 2) %>%</div>
-                </div>
-                <div class="text-end">
-                  <small class="text-secondary d-block">Status</small>
-                  <div class="<%= market_class %> d-flex align-items-center justify-content-end gap-2">
-                    <span class="status-dot <%= stock.market_open ? 'bg-success' : 'bg-secondary' %>"></span>
-                    <%= stock.market_open ? 'Open' : 'Closed' %>
-                  </div>
-                </div>
+            </div>
+
+            <!-- Price -->
+            <div class="as-col">
+              <small class="text-mutedish d-block">Price</small>
+              <div class="fw-semibold"><%= number_to_currency(price) %></div>
+            </div>
+
+            <!-- Current Price -->
+            <div class="as-col">
+              <small class="text-mutedish d-block">Current price</small>
+              <div class="fw-semibold text-highlight-blue"><%= number_to_currency(live_price) %></div>
+            </div>
+
+            <!-- Price change -->
+            <div class="as-col">
+              <small class="text-mutedish d-block">Price change</small>
+              <div class="<%= trend_class %> fw-semibold">
+                <%= up ? '+' : '' %><%= number_with_precision(change, precision: 2) %>
               </div>
-              <!-- Buy Button -->
-              <div class="d-flex align-items-center">
-                <%= form_with url: buy_trade_path, method: :post, class: "d-inline", local: true do %>
-                  <%= hidden_field_tag :stock_id, stock.id %>
-                  <%= hidden_field_tag :shares, 1 %>
-                  <button class="btn btn-success btn-sm px-3">
-                    <i class="bi bi-bag-plus me-1"></i> Buy
-                  </button>
-                <% end %>
+            </div>
+
+            <!-- % change (with icon now) -->
+            <div class="as-col">
+              <small class="text-mutedish d-block">% change</small>
+              <div class="<%= trend_class %> fw-semibold d-flex align-items-center justify-content-end gap-2">
+                <i class="bi <%= trend_icon %>"></i>
+                <span><%= up ? '+' : '' %><%= number_with_precision(pct, precision: 2) %>%</span>
               </div>
+            </div>
+
+            <!-- Status -->
+            <div class="as-col">
+              <small class="text-mutedish d-block">Status</small>
+              <div class="status-wrap <%= market_cls %>">
+                <span class="status-dot <%= stock.market_open ? 'bg-success' : 'bg-secondary' %>"></span>
+                <%= stock.market_open ? 'Open' : 'Closed' %>
+              </div>
+            </div>
+
+            <!-- Buy -->
+            <div class="as-col">
+              <%= form_with url: buy_trade_path, method: :post, class: "buy-form", local: true do %>
+                <%= hidden_field_tag :stock_id, stock.id %>
+                <%= number_field_tag :shares, 1, min: 1, step: 1, class: "qty-input", required: true %>
+                <button class="buy-btn">
+                  <i class="bi bi-arrow-left-right"></i> Buy
+                </button>
+              <% end %>
             </div>
           </div>
         <% end %>
       </div>
     </div>
+
   </div>
 </div>
