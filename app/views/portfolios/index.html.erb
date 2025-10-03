@@ -130,6 +130,21 @@
     border-radius: 0.5rem;
     margin-top: 1rem;
   }
+
+    .dark-input {
+    background-color: #1E293B; /* slightly lighter than table bg (#0F172A) */
+    border: 1px solid #334155; /* subtle border */
+    color: #F1F5F9; /* light gray text */
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .dark-input:focus {
+    background-color: #0F172A; /* even darker on focus */
+    border-color: #3B82F6;     /* blue highlight border */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+  }
 </style>
 <div class="portfolio-dashboard container-fluid">
   <div class="container py-4" style="max-width: 1300px;">
@@ -266,11 +281,16 @@
                 </div>
               </td>
               <td>
-                <%= button_to sell_portfolio_path(p),
-                    method: :post,
-                    params: { quantity: p.quantity },
-                    class: "btn btn-sm btn-warning" do %>
-                    <i class="bi bi-currency-dollar me-1"></i> Sell
+                <%= form_with url: sell_portfolio_path(p), method: :post, local: true do |f| %>
+                  <div class="d-flex align-items-center gap-2">
+                    <!-- Input field for quantity -->
+                    <%= number_field_tag :quantity, 1, min: 1, max: p.quantity, class: "form-control form-control-sm dark-input", style: "width:70px;" %>
+
+                    <!-- Sell button -->
+                    <%= f.button type: "submit", class: "btn btn-sm btn-warning d-flex align-items-center" do %>
+                      <i class="bi bi-currency-dollar me-1"></i> Sell
+                    <% end %>
+                  </div>
                 <% end %>
               </td>
             </tr>
