@@ -1,95 +1,171 @@
-<div class="container-fluid trader-dashboard-bg">
+<%# <meta http-equiv="refresh" content="15"> %>
+<style>
+  .trader-dashboard {
+    background:#0A0F1E;
+    min-height:100vh;
+    color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  .dashboard-title {
+    display:flex;
+    align-items:center;
+    gap:1rem;
+  }
+  .dashboard-subtitle { color:#6B7280; }
+  .stats-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:1.5rem;
+    margin-bottom:2rem;
+  }
+  .stat-card {
+    background:linear-gradient(135deg,#1E293B 0%,#0F172A 100%);
+    border-radius:1rem;
+    border:1px solid #1E293B;
+    padding:1.5rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::before {
+    content:'';
+    position:absolute;
+    top:0; right:0;
+    width:100px; height:100px;
+    background:radial-gradient(circle,rgba(59,130,246,0.1) 0%,transparent 70%);
+  }
+  .stat-label { color:#94A3B8; font-weight:500; margin-bottom:.5rem; }
+  .stat-value { font-weight:700; font-size:1.5rem; }
+  .stat-change { color:#6B7280; font-size:.9rem; }
+  .stat-icon {
+    position:absolute;
+    top:1.5rem; right:1.5rem;
+    width:48px; height:48px;
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem;
+  }
+  .icon-blue { background:rgba(59,130,246,0.15); color:#3B82F6; }
+  .icon-green { background:rgba(34,197,94,0.15); color:#22C55E; }
 
-<div class="container trader-dashboard-bg d-flex flex-column align-items-center">
-<div class="dashboard-content w-100" style="max-width: 1300px;">
- <h3 class="mb-0 fw-bold text-light">Trader Dashboard</h3>
- <small class="text-secondary">Welcome back! Here's your wallet and market overview</small>
-<br>
-<br>
-   <!-- Available Balance-->
-    <div class="row g-4 text-center">
-      <div class="col-md-4">
-        <div class="card text-light border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
-          <div class="card-body">
-            <h6 class="text-secondary">Available Balance</h6>
-            <h2 class="fw-bold text-info"><%= number_to_currency(@wallet.balance) %></h2>
-            <p class="text-secondary mb-0">Ready to trade</p>
+  /* Market overview cards */
+   .market-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* exactly 4 columns */
+    gap: 1rem;
+  }
+  .market-card {
+    background:#0F172A;
+    border:1px solid #1E293B;
+    border-radius:.75rem;
+    padding:1rem;
+    text-align:center;
+    transition:background .2s;
+  }
+  .market-card:hover { background:#1E293B; }
+  .positive { color:#22C55E; }
+  .negative { color:#EF4444; }
+  /* Action buttons */
+  .action-card {
+    background:linear-gradient(135deg,#1E293B 0%,#0F172A 100%);
+    border-radius:1rem;
+    border:1px solid #1E293B;
+    padding:1.5rem;
+    margin-top:2rem;
+  }
+  .action-btn {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.5rem;
+    font-weight:600;
+    padding:1rem;
+    border-radius:.5rem;
+    text-decoration:none;
+    transition:all .2s;
+  }
+  .btn-trade { background:#059669; color:#fff; }
+  .btn-trade:hover { background:#047857; }
+  .btn-assets { background:#3B82F6; color:#fff; }
+  .btn-assets:hover { background:#2563EB; }
+  .btn-wallet { background:#FBBF24; color:#0A0F1E; }
+  .btn-wallet:hover { background:#F59E0B; color:#0A0F1E; }
+</style>
+
+<div class="trader-dashboard container-fluid">
+  <div class="container py-4" style="max-width:1300px;">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="dashboard-title">
+        <i class="bi bi-speedometer2" style="font-size:2rem;"></i>
+        <div>
+          <h1 class="fs-4 fw-bold m-0">Trader Dashboard</h1>
+          <p class="dashboard-subtitle mb-0">Welcome back! Here's your wallet and market overview</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Stats -->
+    <div class="stats-grid">
+      <!-- Available Balance -->
+      <div class="stat-card">
+        <div class="stat-label">Available Balance</div>
+        <div class="stat-value text-highlight-blue"><%= number_to_currency(@wallet.balance) %></div>
+        <div class="stat-change">Ready to trade</div>
+        <div class="stat-icon icon-blue"><i class="bi bi-wallet2"></i></div>
+      </div>
+
+      <!-- Total Deposits -->
+      <div class="stat-card">
+        <div class="stat-label">Total Deposits</div>
+        <div class="stat-value"><%= number_to_currency(@wallet_logs.where(transaction_type: 'deposit').sum(:amount)) %></div>
+        <div class="stat-change">All time</div>
+        <div class="stat-icon icon-green"><i class="bi bi-piggy-bank"></i></div>
+      </div>
+
+      <!-- Trading Volume -->
+      <div class="stat-card">
+        <div class="stat-label">Trading Volume</div>
+        <div class="stat-value text-highlight-blue"><%= number_to_currency(@trade_history.sum(:amount)) %></div>
+        <div class="stat-change">Total traded</div>
+        <div class="stat-icon icon-blue"><i class="bi bi-arrow-left-right"></i></div>
+      </div>
+    </div>
+
+    <!-- Market Overview -->
+    <div class="action-card mb-4">
+      <h2 class="fs-5 fw-semibold mb-3"><i class="bi bi-bar-chart-fill"></i> Market Overview</h2>
+      <div class="market-grid">
+        <% @stocks.each do |stock| %>
+          <div class="market-card">
+            <h6 class="fw-bold text-white mb-1"><%= stock.symbol %></h6>
+            <p class="dashboard-subtitle mb-1"><%= stock.name %></p>
+            <p class="fw-bold mb-0">
+              <%= number_to_currency(stock.current_price) %>
+              <span class="<%= stock.price_change.to_f >= 0 ? 'positive' : 'negative' %>">
+                (<%= stock.price_change.to_f >= 0 ? '+' : '' %><%= number_to_percentage(stock.price_change, precision: 2) %>)
+              </span>
+            </p>
           </div>
-        </div>
-      </div>
-
-    <!-- Total Deposits -->
-    <div class="col-md-4">
-              <div class="card text-light border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
-        <div class="card-body">
-          <h6 class="text-secondary">Total Deposits</h6>
-          <h2 class="fw-bold text-primary"><%= number_to_currency(@wallet_logs.where(transaction_type: 'deposit').sum(:amount)) %></h2>
-          <p class="text-secondary mb-0">All Time</p>
-        </div>
+        <% end %>
       </div>
     </div>
 
-    <!-- Trading Volume -->
-    <div class="col-md-4">
-              <div class="card text-light border-0 shadow-sm" style="background-color: #1F2937; border-radius: 0.5rem;">
-        <div class="card-body">
-          <h6 class="text-secondary">Trading Volume</h6>
-          <h2 class="fw-bold text-info"><%= number_to_currency(@trade_history.sum(:amount)) %></h2>
-          <p class="text-secondary mb-0">Total Traded</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
- <!-- Market Overview -->
-    <div class="card mt-5 border-0 shadow-sm text-light" style="background-color: #1F2937; border-radius: 0.5rem;">
-      <div class="card-header text-white text-left fw-bold" style="background-color: #1F2937; border: none;">Market Overview</div>
-      <div class="card-body">
-        <div class="row row-cols-2 row-cols-md-4 g-3">
-          <% @stocks.each do |stock| %>
-            <div class="col">
-              <div class="card text-light border-0 shadow-sm" style="background-color: #374151; border-radius: 0.5rem;">
-                <div class="card-body text-center">
-                  <h6 class="fw-bold text-white mb-1"><%= stock.symbol %></h6>
-                  <p class="text-secondary mb-1"><%= stock.name %></p>
-                  <p class="fw-bold mb-0">
-                    <%= number_to_currency(stock.current_price) %>
-                    <span class="<%= stock.price_change.to_f >= 0 ? 'text-success' : 'text-danger' %>">
-                      (<%= stock.price_change.to_f >= 0 ? '+' : '' %><%= number_to_percentage(stock.price_change, precision: 2) %>)
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        </div>
+    <!-- Quick Trading Actions -->
+    <div class="action-card">
+      <h2 class="fs-5 fw-semibold mb-3"><i class="bi bi-lightning-charge-fill"></i> Quick Trading Actions</h2>
+      <div class="d-flex flex-column gap-3">
+        <a href="<%= new_trade_path %>" class="action-btn btn-trade w-100">
+          <i class="bi bi-arrow-up-right-circle"></i> Trade Now
+        </a>
+        <a href="<%= portfolios_path %>" class="action-btn btn-assets w-100">
+          <i class="bi bi-graph-up-arrow"></i> Manage Assets
+        </a>
+        <a href="<%= wallet_path %>" class="action-btn btn-wallet w-100">
+          <i class="bi bi-wallet2"></i> My Wallet
+        </a>
       </div>
     </div>
 
-    <br>
-<!-- Quick Trading Actions -->
-<div class="card mb-4 shadow-sm text-light border-0" style="background-color: #1F2937; border-radius: 0.5rem;">
-  <div class="card-header text-white fw-bold" style="background-color: #1F2937; border: none;">
-    Quick Trading Actions
-  </div>
-  <div class="card-body">
-    <div class="d-flex flex-column gap-3">
-
-      <!-- Trade Now -->
-      <a href="<%= new_trade_path %>" class="btn btn-success w-100 py-3 fw-bold shadow">
-        <i class="bi bi-arrow-up-right-circle me-2"></i> Trade Now
-      </a>
-
-      <!-- Manage Assets -->
-      <a href="<%= portfolios_path %>" class="btn btn-info w-100 py-3 text-white fw-bold shadow">
-        <i class="bi bi-graph-up-arrow me-2"></i> Manage Assets
-      </a>
-
-      <!-- My Wallet -->
-      <a href="<%= wallet_path %>" class="btn btn-warning w-100 py-3 text-dark fw-bold shadow">
-        <i class="bi bi-wallet2 me-2"></i> My Wallet
-      </a>
-
-    </div>
   </div>
 </div>

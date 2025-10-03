@@ -1,3 +1,35 @@
+<%# app/views/.../_table.html.erb %>
+<style>
+  .activity-list{display:flex;flex-direction:column;gap:.75rem}
+  .activity-row{background:#0F172A;border:1px solid #1E293B;border-radius:.75rem;padding:1rem;transition:background .2s}
+  .activity-row:hover{background:#1B2436}
+  .row-grid{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center}
+
+  .left-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem}
+  .icon{font-size:1.1rem}
+
+  /* Symbol pill */
+  .symbol-badge{display:inline-block;background:#111827;color:#E5E7EB;
+                border:1px solid #2B3545;padding:.2rem .5rem;
+                border-radius:.5rem;font-size:.75rem}
+
+  /* Transaction pills */
+  .pill{display:inline-block;padding:.25rem .5rem;border-radius:.5rem;
+        font-size:.75rem;font-weight:600;text-transform:uppercase;
+        letter-spacing:.02em}
+  .pill-buy{background:#22C55E;color:#0B1220}      /* green with dark text */
+  .pill-sell{background:#EF4444;color:#fff}       /* red */
+  .pill-deposit{background:#3B82F6;color:#fff}    /* blue */
+  .pill-withdraw{background:#F59E0B;color:#1B1303}/* orange */
+
+  .muted{color:#6B7280}
+  .text-green{color:#22C55E}
+  .text-red{color:#EF4444}
+
+  .right-info{text-align:right}
+  .right-info .amount{font-weight:700}
+</style>
+
 <div class="activity-list">
   <% logs.each do |log| %>
     <% type = log.transaction_type %>
@@ -7,61 +39,72 @@
     <% is_withdraw = type == "withdraw" %>
 
     <% icon_class =
-        case type
-        when "buy" then "bi bi-arrow-up-circle-fill text-success"
-        when "sell" then "bi bi-arrow-down-circle-fill text-danger"
-        when "deposit" then "bi bi-plus-circle-fill text-info"
-        when "withdraw" then "bi bi-dash-circle-fill text-warning"
-        else "bi bi-question-circle-fill text-secondary"
-        end %>
+      case type
+      when "buy"      then "bi bi-arrow-up-circle-fill text-green"
+      when "sell"     then "bi bi-arrow-down-circle-fill text-red"
+      when "deposit"  then "bi bi-arrow-up-circle-fill text-green"
+      when "withdraw" then "bi bi-arrow-down-circle-fill text-red"
+      else                  "bi bi-question-circle-fill muted"
+      end %>
 
-    <% badge_class =
-        case type
-        when "buy" then "bg-success text-white"
-        when "sell" then "bg-danger text-white"
-        when "deposit" then "bg-info text-white"
-        when "withdraw" then "bg-warning text-dark"
-        else "bg-secondary text-white"
-        end %>
+    <% pill_html =
+      case type
+      when "buy"      then '<span class="pill pill-buy">BUY</span>'
+      when "sell"     then '<span class="pill pill-sell">SELL</span>'
+      when "deposit"  then '<span class="pill pill-deposit">DEPOSIT</span>'
+      when "withdraw" then '<span class="pill pill-withdraw">WITHDRAW</span>'
+      else                  '<span class="pill">OTHER</span>'
+      end.html_safe %>
 
-    <% amount_class = log.amount >= 0 ? "text-success" : "text-danger" %>
-    <% action_label =
-        case type
-        when "buy" then "Added to portfolio"
-        when "sell" then "Removed from portfolio"
-        when "deposit" then "Deposited"
-        when "withdraw" then "Withdrawn"
-        else "Processed"
-        end %>
+    <% # Sign and color by type %>
+    <% amount_sign =
+      case type
+      when "buy", "withdraw" then "-"
+      when "sell", "deposit" then "+"
+      else                        (log.amount >= 0 ? "+" : "-")
+      end %>
 
-    <div class="mb-3 p-3 rounded" style="background-color:#374151;">
-      <div class="row align-items-center">
-        <!-- Left side: icon, type, details -->
-        <div class="col-md-8 col-12">
-          <div class="d-flex align-items-center gap-2 mb-1">
-            <i class="<%= icon_class %> fs-5"></i>
-            <strong class="text-light text-uppercase"><%= type %> <%= log.stock&.symbol || "" %></strong>
-            <span class="badge <%= badge_class %> text-uppercase px-2 py-1"><%= type %></span>
+    <% amount_class =
+      case type
+      when "sell", "deposit" then "text-green"
+      when "buy", "withdraw" then "text-red"
+      else                       (log.amount >= 0 ? "text-green" : "text-red")
+      end %>
+
+    <% ts  = log.created_at.in_time_zone("Asia/Manila") %>
+    <% sym = log.stock&.symbol %>
+
+    <div class="activity-row">
+      <div class="row-grid">
+        <!-- Left -->
+        <div>
+          <div class="left-top">
+            <i class="<%= icon_class %> icon"></i>
+            <% if sym.present? %><span class="symbol-badge"><%= sym %></span><% end %>
+            <%= pill_html %>
           </div>
-          <div class="text-secondary">
-            <%= log.created_at.in_time_zone("Asia/Manila").strftime("%b %d, %Y %I:%M %p") %><br>
+
+          <div class="muted">
+            <%= ts.strftime("%b %d, %Y %I:%M %p") %><br>
             <% if is_buy || is_sell %>
-              <%= "#{log.quantity} shares @ #{number_to_currency(log.stock&.current_price || 0)} – #{is_buy ? 'Purchased' : 'Sold'} for #{number_to_currency(log.amount)}" %>
+              <% qty   = log.quantity %>
+              <% price = number_to_currency(log.stock&.current_price || 0) %>
+              <% verb  = is_buy ? 'Purchased' : 'Sold' %>
+              <%= "#{qty} shares @ #{price} – #{verb} for #{number_to_currency(log.amount.abs)}" %>
             <% elsif is_deposit || is_withdraw %>
-              <%= "#{type.capitalize} of #{number_to_currency(log.amount)} via bank transfer" %>
+              <%= "#{type.capitalize} of #{number_to_currency(log.amount.abs)} via bank transfer" %>
             <% else %>
               —
             <% end %>
           </div>
         </div>
 
-        <!-- Right side: amount, action, balance -->
-        <div class="col-md-4 col-12 text-md-end mt-3 mt-md-0">
-          <div class="<%= amount_class %> fw-semibold">
-            <%= log.amount >= 0 ? '+' : '-' %><%= number_to_currency(log.amount.abs) %>
+        <!-- Right -->
+        <div class="right-info">
+          <div class="amount <%= amount_class %>">
+            <%= amount_sign %><%= number_to_currency(log.amount.abs) %>
           </div>
-          <small class="text-muted d-block"><%= "Action: #{type}" %></small>
-          <small class="text-secondary d-block">Balance: <%= number_to_currency(log.wallet&.balance || 0) %></small>
+          <small class="muted d-block">Balance: <%= number_to_currency(log.wallet&.balance || 0) %></small>
         </div>
       </div>
     </div>
