@@ -22,7 +22,7 @@ end
 
   before do
     user.confirm
-    sign_in user  
+    sign_in user
   end
 
   describe "GET /wallet" do
@@ -86,7 +86,7 @@ describe "POST /wallet/withdraw" do
       transaction_type: "withdraw",
       amount: 300
     )
-    expect(response.body).to include("Successfully withdrew") 
+    expect(response.body).to include("Successfully withdrew")
   end
 
     it "rejects invalid or excessive amount" do

@@ -82,7 +82,7 @@ end
     expect(wallet.trading_volume).to eq(300)
   end
 end
- 
+
  describe "#total_deposits" do
   before do
     TradeLog.create!(wallet: wallet, user: user, transaction_type: "deposit", amount: 400, quantity: 1)

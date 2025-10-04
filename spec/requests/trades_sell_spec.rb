@@ -11,7 +11,7 @@ RSpec.describe "Trades (sell)", type: :request do
       password_confirmation: "Password1!",
       first_name: "Seller",
       last_name:  "Test",
-      approved: approved,          
+      approved: approved,
       confirmed_at: Time.current
 
     )

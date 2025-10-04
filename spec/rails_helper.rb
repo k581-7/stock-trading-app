@@ -79,6 +79,9 @@ RSpec.configure do |config|
 config.include ActiveRecord::TestFixtures
   config.before(:suite) { Warden.test_mode! }
   config.after(:each) { Warden.test_reset! }
+  config.before(:each) do
+  ActiveJob::Base.queue_adapter = :test
+  end
 end
 
 Shoulda::Matchers.configure do |config|
