@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails_helper"
 require "securerandom"
 
@@ -28,7 +29,7 @@ RSpec.describe "TradeLogs", type: :request do
 
   let!(:stock) do
     Stock.create!(
-      symbol: "A#{uniq.upcase[0,3]}",
+      symbol: "A#{uniq.upcase[0, 3]}",
       name: "Apple Inc.",
       current_price: 100.0,
       percent_change: 0,
@@ -88,7 +89,7 @@ RSpec.describe "TradeLogs", type: :request do
         get trade_logs_path
         expect(response).to have_http_status(:ok)
 
-        expected = [sell_log_latest, withdraw_log_recent, buy_log_middle, deposit_log_old]
+        expected = [ sell_log_latest, withdraw_log_recent, buy_log_middle, deposit_log_old ]
         # Compare to what the controller scopes to:
         expect(user.trade_logs.order(created_at: :desc).to_a).to eq(expected)
       end
@@ -96,14 +97,14 @@ RSpec.describe "TradeLogs", type: :request do
       it "wallet logs include only deposit/withdraw" do
         get trade_logs_path
         wallet_logs = user.trade_logs.where(transaction_type: %w[deposit withdraw])
-        expect(wallet_logs).to match_array([deposit_log_old, withdraw_log_recent])
+        expect(wallet_logs).to match_array([ deposit_log_old, withdraw_log_recent ])
         expect(wallet_logs.pluck(:transaction_type).uniq.sort).to eq(%w[deposit withdraw])
       end
 
       it "trade history includes only buy/sell" do
         get trade_logs_path
         trade_history = user.trade_logs.where(transaction_type: %w[buy sell])
-        expect(trade_history).to match_array([buy_log_middle, sell_log_latest])
+        expect(trade_history).to match_array([ buy_log_middle, sell_log_latest ])
         expect(trade_history.pluck(:transaction_type).uniq.sort).to eq(%w[buy sell])
       end
 
