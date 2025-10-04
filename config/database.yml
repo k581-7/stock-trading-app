@@ -23,6 +23,11 @@ test:
     <<: *primary_test
     database: stock_trading_app_test_queue
     migrations_paths: db/queue_migrate
+  <<: *default
+  database: stock_trading_app
+  username: <%= ENV["POSTGRES_USERNAME"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  host: localhost
   
 production:
   <<: *default
