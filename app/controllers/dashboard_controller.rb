@@ -4,8 +4,8 @@ class DashboardController < ApplicationController
   def index
     # Wallet and Portfolio
     @wallet = current_user.wallet
-    # @portfolio = current_user.portfolios.first
-    @portfolios = current_user.portfolios.includes(:stock)
+    @portfolio = current_user.portfolios
+    @stocks = current_user.stocks
 
     # Wallet Balance as Portfolio Value Substitute
     @wallet_balance = @wallet.balance

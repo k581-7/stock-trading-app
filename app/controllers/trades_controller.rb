@@ -27,7 +27,7 @@ class TradesController < ApplicationController
     ActiveRecord::Base.transaction do
       wallet.update!(balance: wallet.balance - cost)
 
-      portfolio = current_user.portfolios.find_or_initialize_by(stock: stock)
+      portfolio = current_user.portfolios.find_or_initialize_by(stock_id: stock.id)
       portfolio.quantity = (portfolio.quantity || 0) + shares
       portfolio.save!
 
