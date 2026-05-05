@@ -118,6 +118,26 @@ input[type="submit"]:active {
     transform: translateY(1px);
 }
 
+.login-error {
+    margin-top: 8px;
+    color: #ffb3c6;
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.remember-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.remember-field label {
+    margin: 0;
+    font-weight: 400;
+    color: #f0f0f0;
+}
 
 .links a {
     color: #00bfff;
@@ -158,8 +178,12 @@ input[type="submit"]:active {
       <%= f.password_field :password, autocomplete: "current-password" %>
     </div>
 
+    <% if flash[:alert].present? %>
+      <p class="login-error"><%= flash[:alert] %></p>
+    <% end %>
+
     <% if devise_mapping.rememberable? %>
-      <div class="field">
+      <div class="field remember-field">
         <%= f.check_box :remember_me %>
         <%= f.label :remember_me %>
       </div>

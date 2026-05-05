@@ -41,7 +41,7 @@ RSpec.describe "Portfolios", type: :request do
 
       it "redirects with authorization error" do
         get portfolio_path(portfolio)
-        expect(response).to redirect_to(portfolios_path)
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(response.body).to include("Not authorized")
       end
@@ -79,7 +79,7 @@ RSpec.describe "Portfolios", type: :request do
 
       it "blocks update" do
         patch portfolio_path(portfolio), params: { portfolio: { quantity: 20 } }
-        expect(response).to redirect_to(portfolios_path)
+        expect(response).to redirect_to(root_path)
       end
     end
   end
@@ -92,7 +92,7 @@ RSpec.describe "Portfolios", type: :request do
         expect {
           delete portfolio_path(portfolio)
         }.to change { user.portfolios.count }.by(-1)
-        expect(response).to redirect_to(portfolios_path)
+        expect(response).to redirect_to(root_path)
       end
     end
 
@@ -101,7 +101,7 @@ RSpec.describe "Portfolios", type: :request do
 
       it "blocks deletion" do
         delete portfolio_path(portfolio)
-        expect(response).to redirect_to(portfolios_path)
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(response.body).to include("Not authorized")
       end

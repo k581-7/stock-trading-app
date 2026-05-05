@@ -31,11 +31,13 @@
     <%= render "shared/navbar" %>
     <% end %>
     <!-- :bell: Flash Messages -->
-    <% if notice.present? %>
-      <div class="alert alert-success text-center"><%= notice %></div>
-    <% end %>
-    <% if alert.present? %>
-      <div class="alert alert-danger text-center"><%= alert %></div>
+    <% unless devise_controller? && controller_name == "sessions" && action_name == "new" %>
+      <% if notice.present? %>
+        <div class="alert alert-success text-center"><%= notice %></div>
+      <% end %>
+      <% if alert.present? %>
+        <div class="alert alert-danger text-center"><%= alert %></div>
+      <% end %>
     <% end %>
     <!-- :page_facing_up: Page Content -->
     <%= yield %>
