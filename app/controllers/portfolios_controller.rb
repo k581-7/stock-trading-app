@@ -1,7 +1,7 @@
 class PortfoliosController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_portfolio, only: [:show, :edit, :update, :destroy, :sell]
-  before_action :authorize_portfolio, only: [:show, :edit, :update, :destroy, :sell]
+  before_action :set_portfolio, only: [ :show, :edit, :update, :destroy, :sell ]
+  before_action :authorize_portfolio, only: [ :show, :edit, :update, :destroy, :sell ]
 
   def index
     # User can have multiple portfolios now
